@@ -6,8 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { CheckCircle, BarChart3, Shield, Clock, ArrowRight } from 'lucide-react'
+import { BarChart3, Shield, Clock, ArrowRight } from 'lucide-react'
 
 export default function HomePage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -40,7 +39,7 @@ export default function HomePage() {
         const linkId = result?.id
         const base = typeof window !== 'undefined' ? window.location.origin : ''
         const link = linkId ? `${base}/data-form/${linkId}` : ''
-        alert(link ? `Thank you! Your secure link: ${link}` : `Thank you! We\'ll send you a secure link to complete your analysis.`)
+        alert(link ? `Thank you! Your secure link: ${link}` : 'Thank you! We will send you a secure link to complete your analysis.')
       } else {
         const message = result?.error || result?.details || 'Failed to submit request'
         alert(typeof message === 'string' ? message : 'Failed to submit request')
@@ -185,12 +184,12 @@ export default function HomePage() {
                 <div className="mx-auto w-12 h-12 rounded-lg flex items-center justify-center mb-4 ring-1 ring-slate-200">
                   <Clock className="h-5 w-5 text-slate-900" />
                 </div>
-                <CardTitle className="text-slate-900">Time & Cost Savings</CardTitle>
+                <CardTitle className="text-slate-900">Time &amp; Cost Savings</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-base leading-relaxed">
                   Optimize replacement schedules and reduce unnecessary 
-                  maintenance costs while extending your GAC system's effective life.
+                  maintenance costs while extending your GAC system&apos;s effective life.
                 </CardDescription>
               </CardContent>
             </Card>
