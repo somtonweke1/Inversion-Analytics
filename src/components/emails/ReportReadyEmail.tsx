@@ -45,7 +45,7 @@ export const ReportReadyEmail = ({
         <Text style={text}>
           Great news! Your comprehensive GAC system analysis for {companyName} has been completed. 
           Our advanced modeling algorithms have processed your data and generated detailed insights 
-          about your system's performance and optimization opportunities.
+          about your system&apos;s performance and optimization opportunities.
         </Text>
         
         <Section style={summaryContainer}>

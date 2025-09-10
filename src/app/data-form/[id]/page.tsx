@@ -153,7 +153,7 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
             </div>
             <CardTitle className="text-green-600">Analysis Submitted!</CardTitle>
             <CardDescription>
-              Thank you for submitting your data. We'll process your analysis and send you the results via email.
+              Thank you for submitting your data. We&apos;ll process your analysis and send you the results via email.
             </CardDescription>
           </CardHeader>
         </Card>

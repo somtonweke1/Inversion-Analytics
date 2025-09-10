@@ -38,7 +38,7 @@ export const EmailWithLink = ({
         
         <Text style={text}>
           Thank you for requesting a GAC system analysis for {companyName}. 
-          We're excited to help you optimize your Granular Activated Carbon system performance.
+          We&apos;re excited to help you optimize your Granular Activated Carbon system performance.
         </Text>
         
         <Text style={text}>
@@ -71,7 +71,7 @@ export const EmailWithLink = ({
         </Text>
         
         <Text style={text}>
-          If you have any questions or need assistance, please don't hesitate to contact us 
+          If you have any questions or need assistance, please don&apos;t hesitate to contact us 
           at admin@axiomanalytics.com.
         </Text>
         
@@ -82,7 +82,7 @@ export const EmailWithLink = ({
         
         <Section style={footer}>
           <Text style={footerText}>
-            This link is secure and will expire in 7 days. If you didn't request this analysis, 
+            This link is secure and will expire in 7 days. If you didn&apos;t request this analysis, 
             please ignore this email.
           </Text>
         </Section>
