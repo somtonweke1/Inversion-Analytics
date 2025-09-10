@@ -1,36 +1,219 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Inversion Analytics MVP
 
-## Getting Started
+A comprehensive web application that automates the "Axiom Health Report" process for GAC (Granular Activated Carbon) system analysis. The platform allows data center operators to request reports, submit technical data, and receive professionally generated PDF analyses.
 
-First, run the development server:
+## 🚀 Features
+
+- **Marketing Homepage**: Sleek, professional landing page with contact form
+- **Data Collection Form**: Comprehensive technical questionnaire with validation
+- **Advanced Analysis Engine**: Freundlich Isotherm modeling and Monte Carlo simulation
+- **PDF Report Generation**: Professional, investor-ready reports
+- **Email Integration**: Automated email notifications via Resend
+- **Admin Dashboard**: Management interface for monitoring requests and reports
+- **Authentication**: Secure admin access with Next-Auth
+
+## 🛠 Tech Stack
+
+- **Frontend**: Next.js 14 (App Router), TypeScript, Tailwind CSS, Shadcn/UI
+- **Backend**: Next.js API Routes, Server Actions
+- **Database**: PostgreSQL with Prisma ORM
+- **PDF Generation**: @react-pdf/renderer
+- **Authentication**: Next-Auth
+- **Email**: Resend.com with React Email
+- **Deployment**: Vercel-ready
+
+## 📋 Prerequisites
+
+- Node.js 18+ 
+- PostgreSQL database
+- Resend.com API key (for email functionality)
+
+## 🚀 Getting Started
+
+### 1. Clone and Install
+
+```bash
+git clone <repository-url>
+cd axiom-mvp
+npm install
+```
+
+### 2. Environment Setup
+
+Create a `.env.local` file in the root directory:
+
+```env
+# Database
+DATABASE_URL="postgresql://username:password@localhost:5432/axiom_mvp?schema=public"
+
+# NextAuth
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="your-secret-key-here"
+
+# Resend (for email functionality)
+RESEND_API_KEY="your-resend-api-key-here"
+
+# Admin Access
+ADMIN_EMAIL="admin@axiomanalytics.com"
+ADMIN_PASSWORD="admin123"
+```
+
+### 3. Database Setup
+
+```bash
+# Generate Prisma client
+npx prisma generate
+
+# Run database migrations
+npx prisma db push
+
+# (Optional) Seed the database
+npx prisma db seed
+```
+
+### 4. Start Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit `http://localhost:3000` to see the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📁 Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/                    # Next.js App Router pages
+│   ├── page.tsx           # Marketing homepage
+│   ├── data-form/[id]/    # Data submission form
+│   ├── report/[id]/       # Report display page
+│   ├── admin/             # Admin dashboard and login
+│   └── api/               # API routes
+├── components/            # React components
+│   ├── ui/               # Shadcn/UI components
+│   └── emails/           # Email templates
+├── lib/                  # Utility functions
+│   ├── prisma.ts         # Database client
+│   ├── auth.ts           # Authentication config
+│   ├── validations.ts    # Zod schemas
+│   ├── analysis-engine.ts # GAC analysis algorithms
+│   ├── pdf-generator.ts  # PDF report generation
+│   └── email.ts          # Email service
+└── prisma/               # Database schema
+    └── schema.prisma
+```
 
-## Learn More
+## 🔧 Key Components
 
-To learn more about Next.js, take a look at the following resources:
+### Analysis Engine (`lib/analysis-engine.ts`)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Implements advanced GAC system analysis including:
+- Freundlich Isotherm modeling for capacity estimation
+- Monte Carlo simulation for uncertainty analysis
+- Economic optimization calculations
+- Risk assessment and safety factors
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### PDF Generator (`lib/pdf-generator.ts`)
 
-## Deploy on Vercel
+Creates professional PDF reports with:
+- Executive summary with key metrics
+- Detailed system configuration
+- Water quality parameters
+- GAC properties and performance analysis
+- Key findings and recommendations
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Email System (`lib/email.ts`)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Automated email notifications:
+- Data form invitation emails
+- Report ready notifications
+- Admin notifications for new reports
+
+## 🎯 User Flow
+
+1. **Landing Page**: User visits homepage and clicks "Request Your Free Report"
+2. **Contact Form**: User submits company and contact information
+3. **Email Invitation**: User receives email with secure link to data form
+4. **Data Submission**: User completes comprehensive technical questionnaire
+5. **Analysis Processing**: System runs advanced modeling algorithms
+6. **Report Generation**: PDF report is generated and stored
+7. **Notification**: User and admin receive email notifications
+8. **Report Access**: User can view and download their analysis report
+
+## 🔐 Admin Access
+
+- **Login**: `/admin/login`
+- **Dashboard**: `/admin/dashboard`
+- **Default Credentials**: 
+  - Email: `admin@axiomanalytics.com`
+  - Password: `admin123`
+
+## 🚀 Deployment
+
+### Vercel Deployment
+
+1. Connect your GitHub repository to Vercel
+2. Set environment variables in Vercel dashboard
+3. Deploy automatically on push to main branch
+
+### Database Setup
+
+For production, use a managed PostgreSQL service like:
+- Neon.tech
+- Supabase
+- PlanetScale
+- AWS RDS
+
+## 📊 Analysis Features
+
+### Freundlich Isotherm Modeling
+- Capacity estimation based on PFAS concentration
+- Water quality factor adjustments
+- System type considerations
+
+### Monte Carlo Simulation
+- 5,000 iteration uncertainty analysis
+- P95 confidence intervals
+- Risk assessment metrics
+
+### Economic Analysis
+- Cost per million gallons treated
+- Capital avoidance calculations
+- ROI projections
+
+## 🛡 Security Features
+
+- Input validation with Zod schemas
+- Secure unique tokens (CUIDs)
+- Server-side data processing
+- Protected admin routes
+- Email verification workflow
+
+## 📈 Performance Optimizations
+
+- Server-side PDF generation
+- Efficient database queries
+- Optimized React components
+- Static asset optimization
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
+
+## 📄 License
+
+This project is proprietary software for Inversion Analytics.
+
+## 📞 Support
+
+For technical support or questions:
+- Email: admin@axiomanalytics.com
+- Documentation: [Link to docs]
+
+---
+
+**Built with ❤️ for water treatment optimization**

@@ -1,0 +1,93 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model ContactRequest {
+  id            String   @id @default(cuid())
+  companyName   String
+  contactName   String
+  contactEmail  String   @unique
+  createdAt     DateTime @default(now())
+  status        String   @default("PENDING") // PENDING, DATA_SUBMITTED, REPORT_GENERATED
+  reportId      String?  @unique
+  dataSubmissionForm DataSubmissionForm?
+  report        Report?
+}
+
+model DataSubmissionForm {
+  id        String   @id @default(cuid())
+  contactRequestId String  @unique
+  contactRequest   ContactRequest @relation(fields: [contactRequestId], references: [id], onDelete: Cascade)
+  
+  // System Configuration
+  systemType String // "Fixed Bed" or "Fluidized Bed"
+  vesselDiameter Float // meters
+  vesselHeight Float // meters
+  flowRate Float // m3/h
+  bedHeight Float // meters
+  vesselVolume Float // m3
+  bedVolume Float // m3
+  ebct Float // minutes
+  
+  // Water Quality Parameters
+  toc Float // mg/L
+  sulfate Float // mg/L
+  chloride Float // mg/L
+  alkalinity Float // mg/L as CaCO3
+  hardness Float // mg/L as CaCO3
+  ph Float
+  temperature Float // °C
+  
+  // PFAS Concentrations (ng/L)
+  pfoaConcentration Float
+  pfosConcentration Float
+  pfnaConcentration Float
+  pfhxaConcentration Float
+  pfhxsConcentration Float
+  pfdaConcentration Float
+  pfbsConcentration Float
+  pfhpaConcentration Float
+  pfundaConcentration Float
+  pfdoaConcentration Float
+  totalPfasConcentration Float
+  
+  // GAC Properties
+  gacType String
+  gacDensity Float // kg/m3
+  gacParticleSize Float // mm
+  gacIodineNumber Float // mg/g
+  gacSurfaceArea Float // m2/g
+  
+  // Economic Parameters
+  gacCostPerKg Float // USD/kg
+  replacementCost Float // USD
+  laborCost Float // USD
+  disposalCost Float // USD
+  
+  // Additional Parameters
+  operatingDaysPerYear Float
+  operatingHoursPerDay Float
+  targetRemovalEfficiency Float // %
+  safetyFactor Float
+  
+  createdAt DateTime @default(now())
+}
+
+model Report {
+  id        String   @id @default(cuid())
+  contactRequestId String  @unique
+  contactRequest   ContactRequest @relation(fields: [contactRequestId], references: [id], onDelete: Cascade)
+  pdfUrl    String // Secure URL to the generated PDF (e.g., stored in /public/reports/)
+  projectedLifespanMonths Float
+  capitalAvoidance  Float
+  p95SafeLifeMonths Float
+  generatedAt DateTime @default(now())
+}
