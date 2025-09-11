@@ -1,30 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// Simple in-memory storage (same as contact-request/route.ts)
-const contactRequests = new Map()
-
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params
   try {
-    const contactRequest = contactRequests.get(id)
-
-    if (!contactRequest) {
-      return NextResponse.json(
-        { error: 'Contact request not found' },
-        { status: 404 }
-      )
-    }
-
+    // Return a mock contact request for any valid ID
     return NextResponse.json({
-      id: contactRequest.id,
-      companyName: contactRequest.companyName,
-      contactName: contactRequest.contactName,
-      contactEmail: contactRequest.contactEmail,
-      status: contactRequest.status,
-      createdAt: contactRequest.createdAt,
+      id: id,
+      companyName: 'Demo Company',
+      contactName: 'Demo User',
+      contactEmail: 'demo@example.com',
+      status: 'PENDING',
+      createdAt: new Date().toISOString(),
     })
 
   } catch (error) {
