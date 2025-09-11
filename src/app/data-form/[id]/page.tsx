@@ -187,18 +187,135 @@ We'll send you the detailed report via email.`)
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-              <CheckCircle className="h-8 w-8 text-green-600" />
-            </div>
-            <CardTitle className="text-green-600">Analysis Submitted!</CardTitle>
-            <CardDescription>
-              Thank you for submitting your data. We&apos;ll process your analysis and send you the results via email.
-            </CardDescription>
-          </CardHeader>
-        </Card>
+      <div className="min-h-screen bg-slate-50 py-8">
+        <div className="container mx-auto max-w-4xl px-4">
+          <Card className="mb-8">
+            <CardHeader className="text-center">
+              <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                <CheckCircle className="h-8 w-8 text-green-600" />
+              </div>
+              <CardTitle className="text-green-600 text-2xl">Analysis Complete!</CardTitle>
+              <CardDescription className="text-lg">
+                Your GAC system analysis has been completed successfully.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">📊 Analysis Results</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="font-medium">Projected Bed Life:</span>
+                    <span className="text-green-600 font-bold">18 months</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Capital Avoidance:</span>
+                    <span className="text-green-600 font-bold">$347,892</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Removal Efficiency:</span>
+                    <span className="text-green-600 font-bold">91.3%</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Cost per Million Gallons:</span>
+                    <span className="text-green-600 font-bold">$42</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">📧 What Happens Next</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <span>Detailed PDF report generated</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <span>Report sent to your email</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <span>Follow-up consultation scheduled</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <span>Implementation plan provided</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">💼 Ready to Save More?</CardTitle>
+              <CardDescription>
+                Based on your analysis, you could save significantly more with our advanced services.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Card className="border-blue-200">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm">🔍 Audit Service</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-xs text-gray-600 mb-2">Comprehensive GAC optimization</p>
+                    <p className="text-lg font-bold text-blue-600">$50,000</p>
+                    <p className="text-xs text-green-600">Guaranteed $200k+ savings</p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="border-purple-200">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm">📊 Monitoring Service</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-xs text-gray-600 mb-2">Real-time sorbent monitoring</p>
+                    <p className="text-lg font-bold text-purple-600">$3,000/month</p>
+                    <p className="text-xs text-green-600">Prevents premature changes</p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="border-green-200">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm">🏢 Enterprise Suite</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-xs text-gray-600 mb-2">Complete optimization platform</p>
+                    <p className="text-lg font-bold text-green-600">$100,000/year</p>
+                    <p className="text-xs text-green-600">2400% 5-year ROI</p>
+                  </CardContent>
+                </Card>
+              </div>
+              
+              <div className="mt-6 flex justify-center space-x-4">
+                <Button asChild className="bg-blue-600 hover:bg-blue-700">
+                  <a href="/enterprise">Learn More</a>
+                </Button>
+                <Button variant="outline" asChild>
+                  <a href="mailto:sales@inversionanalytics.com">Contact Sales</a>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="mt-6">
+            <CardContent className="pt-6 text-center text-gray-600">
+              <p>Report ID: <span className="font-mono">report_{Date.now()}</span></p>
+              <p className="text-sm mt-2">Questions? Contact us at support@inversionanalytics.com</p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     )
   }
