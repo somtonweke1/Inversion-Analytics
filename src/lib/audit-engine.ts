@@ -260,7 +260,8 @@ export class AuditEngine {
   private async assessRisks(analysis: any, request: AuditRequest) {
     const complianceRisk = analysis.currentEfficiency < request.complianceRequirements.targetRemovalEfficiency ? 'high' : 'low'
     const operationalRisk = analysis.capacityUtilization > 90 ? 'high' : 'medium'
-    const financialRisk = request.currentGACSystem.currentCosts.totalAnnual > request.budgetConstraints.maxOpEx ? 'high' : 'low'
+    const financialRisk = request.budgetConstraints?.maxOpEx ? 
+      (request.currentGACSystem.currentCosts.totalAnnual > request.budgetConstraints.maxOpEx ? 'high' : 'low') : 'low'
     
     return {
       complianceRisk,
