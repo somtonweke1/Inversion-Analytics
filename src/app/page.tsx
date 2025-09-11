@@ -52,8 +52,8 @@ export default function HomePage() {
               <BarChart3 className="h-6 w-6 text-slate-900" />
               <span className="text-xl font-semibold tracking-tight text-slate-900">Inversion Analytics</span>
             </div>
-            <Button variant="outline" size="sm" className="rounded-full">
-              Contact Sales
+            <Button variant="outline" size="sm" className="rounded-full" asChild>
+              <a href="/enterprise">Enterprise</a>
             </Button>
           </div>
         </div>
