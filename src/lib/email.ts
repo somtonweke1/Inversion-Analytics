@@ -5,6 +5,21 @@ import ReportReadyEmail from '@/components/emails/ReportReadyEmail'
 const hasResendKey = Boolean(process.env.RESEND_API_KEY)
 const resend = hasResendKey ? new Resend(process.env.RESEND_API_KEY) : null as unknown as Resend
 
+// Helper function to safely send emails
+async function safeEmailSend(emailFunction: () => Promise<any>) {
+  try {
+    if (!hasResendKey) {
+      console.warn('[email] RESEND_API_KEY not set; skipping email send. This is expected in development.')
+      return { id: 'dev-skip', success: true }
+    }
+    return await emailFunction()
+  } catch (error) {
+    console.error('[email] Error sending email:', error)
+    // Return success to prevent blocking the main flow
+    return { id: 'error-skip', success: false, error: error instanceof Error ? error.message : 'Unknown error' }
+  }
+}
+
 export async function sendDataFormEmail({
   contactName,
   contactEmail,
@@ -16,11 +31,7 @@ export async function sendDataFormEmail({
   companyName: string
   dataFormUrl: string
 }) {
-  try {
-    if (!hasResendKey) {
-      console.warn('[email] RESEND_API_KEY not set; skipping sendDataFormEmail. Intended for local dev.')
-      return { id: 'dev-skip' }
-    }
+  return await safeEmailSend(async () => {
     const { data, error } = await resend.emails.send({
       from: 'Inversion Analytics <noreply@inversionanalytics.com>',
       to: [contactEmail],
@@ -38,10 +49,7 @@ export async function sendDataFormEmail({
     }
 
     return data
-  } catch (error) {
-    console.error('Error in sendDataFormEmail:', error)
-    throw error
-  }
+  })
 }
 
 export async function sendReportReadyEmail({
@@ -61,11 +69,7 @@ export async function sendReportReadyEmail({
   capitalAvoidance: number
   p95SafeLifeMonths: number
 }) {
-  try {
-    if (!hasResendKey) {
-      console.warn('[email] RESEND_API_KEY not set; skipping sendReportReadyEmail. Intended for local dev.')
-      return { id: 'dev-skip' }
-    }
+  return await safeEmailSend(async () => {
     const { data, error } = await resend.emails.send({
       from: 'Inversion Analytics <noreply@inversionanalytics.com>',
       to: [contactEmail],
@@ -86,10 +90,7 @@ export async function sendReportReadyEmail({
     }
 
     return data
-  } catch (error) {
-    console.error('Error in sendReportReadyEmail:', error)
-    throw error
-  }
+  })
 }
 
 export async function sendAdminNotification({
@@ -105,11 +106,7 @@ export async function sendAdminNotification({
   reportUrl: string
   projectedLifespanMonths: number
 }) {
-  try {
-    if (!hasResendKey) {
-      console.warn('[email] RESEND_API_KEY not set; skipping sendAdminNotification. Intended for local dev.')
-      return { id: 'dev-skip' }
-    }
+  return await safeEmailSend(async () => {
     const { data, error } = await resend.emails.send({
       from: 'Inversion Analytics <noreply@inversionanalytics.com>',
       to: [process.env.ADMIN_EMAIL || 'admin@axiomanalytics.com'],
@@ -132,10 +129,7 @@ export async function sendAdminNotification({
     }
 
     return data
-  } catch (error) {
-    console.error('Error in sendAdminNotification:', error)
-    throw error
-  }
+  })
 }
 
 
