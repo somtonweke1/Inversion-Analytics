@@ -24,8 +24,7 @@ export default function HomePage() {
     }
     
     try {
-      // For now, generate a mock response since serverless functions have limitations
-      // In production, this would connect to a real database
+      // Generate a mock response that works in both local and production
       await new Promise(resolve => setTimeout(resolve, 1000))
       
       const mockId = `contact_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
