@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     const reports = await prisma.report.findMany({
       select: { capitalAvoidance: true }
     })
-    const totalCapitalAvoidance = reports.reduce((sum, report) => sum + report.capitalAvoidance, 0)
+    const totalCapitalAvoidance = reports.reduce((sum: number, report: any) => sum + report.capitalAvoidance, 0)
 
     // Get recent reports
     const recentReports = await prisma.report.findMany({
