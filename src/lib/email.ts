@@ -6,7 +6,7 @@ const hasResendKey = Boolean(process.env.RESEND_API_KEY)
 const resend = hasResendKey ? new Resend(process.env.RESEND_API_KEY) : null as unknown as Resend
 
 // Helper function to safely send emails
-async function safeEmailSend(emailFunction: () => Promise<any>) {
+async function safeEmailSend(emailFunction: () => Promise<any>) { // eslint-disable-line @typescript-eslint/no-explicit-any
   try {
     if (!hasResendKey) {
       console.warn('[email] RESEND_API_KEY not set; skipping email send. This is expected in development.')

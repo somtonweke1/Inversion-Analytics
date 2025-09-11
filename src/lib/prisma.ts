@@ -14,18 +14,18 @@ const createInMemoryDB = () => {
   
   return {
     contactRequest: {
-      findUnique: async ({ where }: any) => {
+      findUnique: async ({ where }: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
         const id = where.id || where.contactEmail
         return data.contactRequests.get(id) || null
       },
-      create: async ({ data: newData }: any) => {
+      create: async ({ data: newData }: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
         const id = `contact_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
         const record = { id, ...newData, status: 'PENDING', createdAt: new Date() }
         data.contactRequests.set(id, record)
         data.contactRequests.set(newData.contactEmail, record)
         return record
       },
-      update: async ({ where, data: updateData }: any) => {
+      update: async ({ where, data: updateData }: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
         const id = where.id
         const existing = data.contactRequests.get(id)
         if (existing) {
@@ -38,7 +38,7 @@ const createInMemoryDB = () => {
       }
     },
     dataSubmissionForm: {
-      create: async ({ data: newData }: any) => {
+      create: async ({ data: newData }: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
         const id = `submission_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
         const record = { id, ...newData, createdAt: new Date() }
         data.dataSubmissions.set(id, record)
@@ -46,7 +46,7 @@ const createInMemoryDB = () => {
       }
     },
     report: {
-      create: async ({ data: newData }: any) => {
+      create: async ({ data: newData }: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
         const id = `report_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
         const record = { id, ...newData, createdAt: new Date() }
         data.reports.set(id, record)
@@ -57,7 +57,7 @@ const createInMemoryDB = () => {
 }
 
 // Use in-memory DB for immediate testing, fallback to Prisma if available
-let prisma: any
+let prisma: any // eslint-disable-line @typescript-eslint/no-explicit-any
 try {
   prisma = globalForPrisma.prisma ?? new PrismaClient()
   if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma

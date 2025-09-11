@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
 
     // Perform the analysis (with timeout protection)
     const analysisPromise = Promise.resolve(performAnalysis(validatedData))
-    const analysisResults = await Promise.race([analysisPromise, timeoutPromise]) as any
+    const analysisResults = await Promise.race([analysisPromise, timeoutPromise]) as any // eslint-disable-line @typescript-eslint/no-explicit-any
 
     // Generate the PDF report (with timeout protection)
     const pdfPromise = generateReportPDF(analysisResults, validatedData, contactRequest)
