@@ -13,3 +13,4 @@ coverage/
 public/reports/
 src/generated/prisma/
 **/.DS_Store
+.vercel

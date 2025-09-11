@@ -34,7 +34,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/admin/login')
-    } else if (status === 'authenticated' && session?.user?.role !== 'admin') {
+    } else if (status === 'authenticated' && (session?.user as { role?: string })?.role !== 'admin') {
       router.push('/')
     }
   }, [status, session, router])
@@ -71,7 +71,7 @@ export default function AdminDashboard() {
     )
   }
 
-  if (status === 'unauthenticated' || session?.user?.role !== 'admin') {
+  if (status === 'unauthenticated' || (session?.user as { role?: string })?.role !== 'admin') {
     return null
   }
 

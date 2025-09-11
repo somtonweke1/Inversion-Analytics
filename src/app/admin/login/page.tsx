@@ -33,7 +33,7 @@ export default function AdminLoginPage() {
       } else {
         // Check if user is admin
         const session = await getSession()
-        if (session?.user?.role === 'admin') {
+        if ((session?.user as { role?: string })?.role === 'admin') {
           router.push('/admin/dashboard')
         } else {
           setError('Access denied')
