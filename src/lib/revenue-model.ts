@@ -366,3 +366,48 @@ export class RevenueModel {
     }
   }
 }
+
+// Export constants for easy access
+export const AUDIT_PRICE = 50000
+export const MONITORING_PRICE_PER_MONTH = 3000
+export const SOFTWARE_LICENSE_PRICE_ANNUAL = 25000
+export const ENTERPRISE_SUITE_PRICE_ANNUAL = 100000
+
+// Export convenience functions
+export function calculateRevenueProjections(
+  initialAudits: number,
+  auditConversionToMonitoring: number,
+  auditConversionToSoftware: number,
+  growthRateAudits: number,
+  growthRateMonitoring: number,
+  growthRateSoftware: number,
+  years: number = 5
+): RevenueProjection[] {
+  const model = RevenueModel.getInstance()
+  return model.generateCustomProjections({
+    initialAudits,
+    auditConversionToMonitoring,
+    auditConversionToSoftware,
+    growthRateAudits,
+    growthRateMonitoring,
+    growthRateSoftware,
+    years
+  })
+}
+
+export function getMarketAnalysis(): {
+  totalAddressableMarket: number
+  serviceableAddressableMarket: number
+  targetMarketShare: number
+  targetRevenue5Years: number
+} {
+  const model = RevenueModel.getInstance()
+  const market = model.getMarketOpportunity()
+  
+  return {
+    totalAddressableMarket: market.totalAddressableMarket / 1000000000, // Convert to billions
+    serviceableAddressableMarket: market.serviceableAddressableMarket / 1000000, // Convert to millions
+    targetMarketShare: 1, // 1%
+    targetRevenue5Years: market.serviceableObtainableMarket / 1000000, // Convert to millions
+  }
+}
