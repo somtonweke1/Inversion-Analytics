@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createContactRequest } from '@/lib/storage'
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,15 +13,15 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Generate unique ID
-    const contactId = `contact_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    // Create contact request using shared storage
+    const contactRequest = createContactRequest(body)
 
-    // Return success immediately
+    // Return success with the stored data
     return NextResponse.json({
       success: true,
       message: 'Contact request created successfully',
-      id: contactId,
-      dataFormUrl: `https://axiom-mvp.vercel.app/data-form/${contactId}`
+      id: contactRequest.id,
+      dataFormUrl: `https://axiom-mvp.vercel.app/data-form/${contactRequest.id}`
     })
 
   } catch (error) {
