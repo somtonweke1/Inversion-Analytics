@@ -7,6 +7,8 @@ const contactRequestSchema = z.object({
   companyName: z.string().min(1, 'Company name is required'),
   contactName: z.string().min(1, 'Contact name is required'),
   contactEmail: z.string().email('Valid email is required'),
+  phoneNumber: z.string().optional(),
+  message: z.string().optional(),
 })
 
 export async function POST(request: NextRequest) {
