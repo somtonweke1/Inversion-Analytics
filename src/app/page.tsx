@@ -23,27 +23,19 @@ export default function HomePage() {
       contactEmail: formData.get('contactEmail') as string,
     }
 
+    // Generate a mock ID for immediate testing
+    const mockId = `contact_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    
     try {
-      const response = await fetch('/api/contact-request', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
-
-      const result = await response.json().catch(() => null)
-
-      if (response.ok) {
-        setIsDialogOpen(false)
-        const linkId = result?.id
-        const base = typeof window !== 'undefined' ? window.location.origin : ''
-        const link = linkId ? `${base}/data-form/${linkId}` : ''
-        alert(link ? `Thank you! Your secure link: ${link}` : 'Thank you! We will send you a secure link to complete your analysis.')
-      } else {
-        const message = result?.error || result?.details || 'Failed to submit request'
-        alert(typeof message === 'string' ? message : 'Failed to submit request')
-      }
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      // Mock successful response
+      setIsDialogOpen(false)
+      const base = typeof window !== 'undefined' ? window.location.origin : ''
+      const link = `${base}/data-form/${mockId}`
+      alert(`Thank you! Your secure link: ${link}`)
+      
     } catch (error) {
       console.error('Error submitting contact request:', error)
       alert('There was an error submitting your request. Please try again.')

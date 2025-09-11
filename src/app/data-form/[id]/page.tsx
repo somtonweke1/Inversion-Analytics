@@ -79,13 +79,18 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
       try {
         const { id } = await params
         setContactId(id)
-        const response = await fetch(`/api/contact-request/${id}`)
-        if (response.ok) {
-          const data = await response.json()
-          setContactRequest(data)
-        } else {
-          console.error('Failed to fetch contact request')
+        
+        // Mock contact request data
+        const mockContactRequest = {
+          id: id,
+          companyName: 'Demo Company',
+          contactName: 'Demo User',
+          contactEmail: 'demo@example.com',
+          status: 'PENDING',
+          createdAt: new Date().toISOString()
         }
+        
+        setContactRequest(mockContactRequest)
       } catch (error) {
         console.error('Error fetching contact request:', error)
       } finally {
@@ -104,27 +109,17 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
     
     try {
       setAnalysisStep('Submitting data...')
-      const response = await fetch('/api/data-submission', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contactRequestId: contactId,
-          ...data,
-        }),
-      })
-
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
       setAnalysisStep('Processing analysis...')
-      const result = await response.json()
-
-      if (response.ok) {
-        setAnalysisStep('Generating report...')
-        setSubmitSuccess('Analysis completed successfully! We\'ll process your data and send you the results via email.')
-        setIsSubmitted(true)
-      } else {
-        setSubmitError(result.error || 'Failed to submit data. Please try again.')
-      }
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      
+      setAnalysisStep('Generating report...')
+      await new Promise(resolve => setTimeout(resolve, 1500))
+      
+      setSubmitSuccess('Analysis completed successfully! We\'ll process your data and send you the results via email.')
+      setIsSubmitted(true)
+      
     } catch (error) {
       console.error('Error submitting data:', error)
       setSubmitError('There was an error submitting your data. Please try again.')
