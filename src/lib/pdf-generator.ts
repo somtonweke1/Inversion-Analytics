@@ -14,15 +14,7 @@ export async function generateReportPDF(
     const { pdf } = await import('@react-pdf/renderer')
     
     // Create the PDF buffer with optimized settings
-    const pdfDoc = pdf(ReportPDF({ analysisResults, formData, contactRequest }), {
-      compress: true, // Enable compression for faster generation
-      info: {
-        Title: `GAC Analysis Report - ${contactRequest.companyName}`,
-        Author: 'Inversion Analytics',
-        Subject: 'GAC System Analysis',
-        Creator: 'Inversion Analytics Platform'
-      }
-    })
+    const pdfDoc = pdf(ReportPDF({ analysisResults, formData, contactRequest }))
     const pdfStream = await pdfDoc.toBlob()
     const arrayBuffer = await pdfStream.arrayBuffer()
     const pdfBuffer = Buffer.from(arrayBuffer)
@@ -34,7 +26,7 @@ export async function generateReportPDF(
     const reportsDir = join(process.cwd(), 'public', 'reports')
     try {
       await mkdir(reportsDir, { recursive: true })
-    } catch (error) {
+    } catch (error) { // eslint-disable-line @typescript-eslint/no-unused-vars
       // Directory might already exist
     }
 

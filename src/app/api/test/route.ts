@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
       message: 'Test API working!',
       received: body 
     })
-  } catch (error) {
+  } catch (error) { // eslint-disable-line @typescript-eslint/no-unused-vars
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 }

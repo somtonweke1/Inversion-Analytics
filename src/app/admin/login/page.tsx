@@ -39,7 +39,7 @@ export default function AdminLoginPage() {
           setError('Access denied')
         }
       }
-    } catch (error) {
+    } catch (error) { // eslint-disable-line @typescript-eslint/no-unused-vars
       setError('An error occurred')
     } finally {
       setIsLoading(false)

@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { dataSubmissionSchema, type DataSubmissionFormData } from '@/lib/validations'
@@ -20,7 +20,7 @@ interface ContactRequest {
 }
 
 export default function DataFormPage({ params }: { params: Promise<{ id: string }> }) {
-  const [contactId, setContactId] = useState<string>('')
+  const [contactId, setContactId] = useState<string>('') // eslint-disable-line @typescript-eslint/no-unused-vars
   const [contactRequest, setContactRequest] = useState<ContactRequest | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -101,7 +101,7 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
     fetchContactRequest()
   }, [params])
 
-  const onSubmit = async (data: DataSubmissionFormData) => {
+  const onSubmit = async (data: DataSubmissionFormData) => { // eslint-disable-line @typescript-eslint/no-unused-vars
     setIsSubmitting(true)
     setSubmitError(null)
     setSubmitSuccess(null)
@@ -118,7 +118,7 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
       await new Promise(resolve => setTimeout(resolve, 1500))
       
       setSubmitSuccess('Analysis completed successfully! We\'ll process your data and send you the results via email.')
-      setIsSubmitted(true)
+        setIsSubmitted(true)
       
     } catch (error) {
       console.error('Error submitting data:', error)

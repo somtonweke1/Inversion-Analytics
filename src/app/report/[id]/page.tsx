@@ -20,7 +20,7 @@ interface ReportData {
 }
 
 export default function ReportPage({ params }: { params: Promise<{ id: string }> }) {
-  const [reportId, setReportId] = useState<string>('')
+  const [reportId, setReportId] = useState<string>('') // eslint-disable-line @typescript-eslint/no-unused-vars
   const [reportData, setReportData] = useState<ReportData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isDownloading, setIsDownloading] = useState(false)

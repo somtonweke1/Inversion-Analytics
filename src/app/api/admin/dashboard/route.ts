@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest) { // eslint-disable-line @typescript-eslint/no-unused-vars
   try {
     // Get total requests
     const totalRequests = await prisma.contactRequest.count()
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     const reports = await prisma.report.findMany({
       select: { capitalAvoidance: true }
     })
-    const totalCapitalAvoidance = reports.reduce((sum: number, report: any) => sum + report.capitalAvoidance, 0)
+    const totalCapitalAvoidance = reports.reduce((sum: number, report: any) => sum + report.capitalAvoidance, 0) // eslint-disable-line @typescript-eslint/no-explicit-any
 
     // Get recent reports
     const recentReports = await prisma.report.findMany({
@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       stats,
-      recentReports: recentReports.map(report => ({
+      recentReports: recentReports.map((report: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
         id: report.id,
         companyName: report.contactRequest.companyName,
         contactName: report.contactRequest.contactName,

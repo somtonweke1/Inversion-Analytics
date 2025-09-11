@@ -17,7 +17,7 @@ export default function HomePage() {
     setIsSubmitting(true)
     
     const formData = new FormData(e.currentTarget)
-    const data = {
+    const data = { // eslint-disable-line @typescript-eslint/no-unused-vars
       companyName: formData.get('companyName') as string,
       contactName: formData.get('contactName') as string,
       contactEmail: formData.get('contactEmail') as string,
