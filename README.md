@@ -2,7 +2,7 @@
 
 A comprehensive web application that automates the "Axiom Health Report" process for GAC (Granular Activated Carbon) system analysis. The platform allows data center operators to request reports, submit technical data, and receive professionally generated PDF analyses.
 
-## 🚀 Features
+## Features
 
 - **Marketing Homepage**: Sleek, professional landing page with contact form
 - **Data Collection Form**: Comprehensive technical questionnaire with validation
@@ -12,7 +12,7 @@ A comprehensive web application that automates the "Axiom Health Report" process
 - **Admin Dashboard**: Management interface for monitoring requests and reports
 - **Authentication**: Secure admin access with Next-Auth
 
-## 🛠 Tech Stack
+## Tech Stack
 
 - **Frontend**: Next.js 14 (App Router), TypeScript, Tailwind CSS, Shadcn/UI
 - **Backend**: Next.js API Routes, Server Actions
@@ -22,7 +22,7 @@ A comprehensive web application that automates the "Axiom Health Report" process
 - **Email**: Resend.com with React Email
 - **Deployment**: Vercel-ready
 
-## 📋 Prerequisites
+## Prerequisites
 
 - Node.js 18+ 
 - PostgreSQL database
@@ -211,7 +211,7 @@ This project is proprietary software for Inversion Analytics.
 ## 📞 Support
 
 For technical support or questions:
-- Email: admin@axiomanalytics.com
+- Email: somtonwekec@gmail.com
 - Documentation: [Link to docs]
 
 ---
