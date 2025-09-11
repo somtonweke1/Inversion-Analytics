@@ -263,55 +263,55 @@ We'll send you the detailed report via email.`)
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Card className="border-blue-200">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm">🔍 Audit Service</CardTitle>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Card className="border-0 shadow-none hover:shadow-lg transition-all duration-300 bg-white">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-base text-slate-900">Audit Service</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-xs text-gray-600 mb-2">Comprehensive GAC optimization</p>
-                    <p className="text-lg font-bold text-blue-600">$50,000</p>
-                    <p className="text-xs text-green-600">Guaranteed $200k+ savings</p>
+                    <p className="text-sm text-slate-600 mb-3">Comprehensive GAC optimization</p>
+                    <p className="text-xl font-bold text-slate-900">$50,000</p>
+                    <p className="text-sm text-slate-600 mt-2">Guaranteed $200k+ savings</p>
                   </CardContent>
                 </Card>
                 
-                <Card className="border-purple-200">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm">📊 Monitoring Service</CardTitle>
+                <Card className="border-0 shadow-none hover:shadow-lg transition-all duration-300 bg-white">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-base text-slate-900">Monitoring Service</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-xs text-gray-600 mb-2">Real-time sorbent monitoring</p>
-                    <p className="text-lg font-bold text-purple-600">$3,000/month</p>
-                    <p className="text-xs text-green-600">Prevents premature changes</p>
+                    <p className="text-sm text-slate-600 mb-3">Real-time sorbent monitoring</p>
+                    <p className="text-xl font-bold text-slate-900">$3,000/month</p>
+                    <p className="text-sm text-slate-600 mt-2">Prevents premature changes</p>
                   </CardContent>
                 </Card>
                 
-                <Card className="border-green-200">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm">🏢 Enterprise Suite</CardTitle>
+                <Card className="border-0 shadow-none hover:shadow-lg transition-all duration-300 bg-white">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-base text-slate-900">Enterprise Suite</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-xs text-gray-600 mb-2">Complete optimization platform</p>
-                    <p className="text-lg font-bold text-green-600">$100,000/year</p>
-                    <p className="text-xs text-green-600">2400% 5-year ROI</p>
+                    <p className="text-sm text-slate-600 mb-3">Complete optimization platform</p>
+                    <p className="text-xl font-bold text-slate-900">$100,000/year</p>
+                    <p className="text-sm text-slate-600 mt-2">2400% 5-year ROI</p>
                   </CardContent>
                 </Card>
               </div>
               
-              <div className="mt-6 flex justify-center space-x-4">
-                <Button asChild className="bg-blue-600 hover:bg-blue-700">
+              <div className="mt-8 flex justify-center space-x-4">
+                <Button asChild className="bg-slate-900 hover:bg-slate-800 text-white">
                   <a href="/enterprise">Learn More</a>
                 </Button>
-                <Button variant="outline" asChild>
+                <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50" asChild>
                   <a href="mailto:sales@inversionanalytics.com">Contact Sales</a>
                 </Button>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="mt-6">
-            <CardContent className="pt-6 text-center text-gray-600">
-              <p>Report ID: <span className="font-mono">report_{Date.now()}</span></p>
+          <Card className="mt-8 border-0 shadow-none bg-slate-50">
+            <CardContent className="pt-6 text-center text-slate-600">
+              <p>Report ID: <span className="font-mono text-slate-900">report_{Date.now()}</span></p>
               <p className="text-sm mt-2">Questions? Contact us at support@inversionanalytics.com</p>
             </CardContent>
           </Card>
