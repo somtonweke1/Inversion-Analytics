@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { dataSubmissionSchema, type DataSubmissionFormData } from '@/lib/validations'
 import { Loader2, CheckCircle } from 'lucide-react'
+import { performMockAnalysis, generateMockReport } from '@/lib/mock-analysis'
 
 interface ContactRequest {
   id: string
@@ -101,7 +102,7 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
     fetchContactRequest()
   }, [params])
 
-  const onSubmit = async (data: DataSubmissionFormData) => { // eslint-disable-line @typescript-eslint/no-unused-vars
+  const onSubmit = async (data: DataSubmissionFormData) => {
     setIsSubmitting(true)
     setSubmitError(null)
     setSubmitSuccess(null)
@@ -114,11 +115,29 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
       setAnalysisStep('Processing analysis...')
       await new Promise(resolve => setTimeout(resolve, 2000))
       
+      // Perform mock analysis
+      const analysisResults = performMockAnalysis(data)
+      
       setAnalysisStep('Generating report...')
       await new Promise(resolve => setTimeout(resolve, 1500))
       
-      setSubmitSuccess('Analysis completed successfully! We\'ll process your data and send you the results via email.')
-        setIsSubmitted(true)
+      // Generate mock report
+      const report = generateMockReport(analysisResults, data, contactRequest)
+      
+      setAnalysisStep('Sending notifications...')
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      setSubmitSuccess(`Analysis completed successfully! 
+      
+Key Results:
+• Projected Bed Life: ${analysisResults.projectedLifespanMonths} months
+• Capital Avoidance: $${analysisResults.capitalAvoidance.toLocaleString()}
+• Removal Efficiency: ${analysisResults.removalEfficiency.toFixed(1)}%
+• Cost per Million Gallons: $${analysisResults.costPerMillionGallons}
+
+Report ID: ${report.id}
+We'll send you the detailed report via email.`)
+      setIsSubmitted(true)
       
     } catch (error) {
       console.error('Error submitting data:', error)
