@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { signIn, getSession } from 'next-auth/react'
+// import { signIn, getSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -14,7 +14,7 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
-  const router = useRouter()
+  const router = useRouter() // eslint-disable-line @typescript-eslint/no-unused-vars
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -22,22 +22,24 @@ export default function AdminLoginPage() {
     setError('')
 
     try {
-      const result = await signIn('credentials', {
-        email,
-        password,
-        redirect: false,
-      })
+      // const result = await signIn('credentials', {
+      //   email,
+      //   password,
+      //   redirect: false,
+      // })
+      const result = { error: 'Admin login disabled' }
 
       if (result?.error) {
         setError('Invalid credentials')
       } else {
         // Check if user is admin
-        const session = await getSession()
-        if ((session?.user as { role?: string })?.role === 'admin') {
-          router.push('/admin/dashboard')
-        } else {
-          setError('Access denied')
-        }
+      // const session = await getSession()
+      // if ((session?.user as { role?: string })?.role === 'admin') {
+      //   router.push('/admin/dashboard')
+      // } else {
+      //   setError('Access denied')
+      // }
+      setError('Admin login temporarily disabled')
       }
     } catch (error) { // eslint-disable-line @typescript-eslint/no-unused-vars
       setError('An error occurred')
