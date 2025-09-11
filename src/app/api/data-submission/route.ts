@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
 import { dataSubmissionSchema } from '@/lib/validations'
 import { performAnalysis } from '@/lib/analysis-engine'
 import { generateReportPDF } from '@/lib/pdf-generator'
 import { sendReportReadyEmail, sendAdminNotification } from '@/lib/email'
+
+// Simple in-memory storage
+const contactRequests = new Map()
+const dataSubmissions = new Map()
+const reports = new Map()
 
 export async function POST(request: NextRequest) {
   // Set a timeout to prevent Vercel's 5-minute limit
@@ -19,9 +23,7 @@ export async function POST(request: NextRequest) {
     const validatedData = dataSubmissionSchema.parse(formData)
 
     // Check if contact request exists
-    const contactRequest = await prisma.contactRequest.findUnique({
-      where: { id: contactRequestId }
-    })
+    const contactRequest = contactRequests.get(contactRequestId)
 
     if (!contactRequest) {
       return NextResponse.json(
@@ -39,12 +41,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Save the data submission form
-    const dataSubmission = await prisma.dataSubmissionForm.create({
-      data: {
-        contactRequestId,
-        ...validatedData,
-      }
-    })
+    const submissionId = `submission_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    const dataSubmission = {
+      id: submissionId,
+      contactRequestId,
+      ...validatedData,
+      createdAt: new Date().toISOString()
+    }
+    dataSubmissions.set(submissionId, dataSubmission)
 
     // Perform the analysis (with timeout protection)
     const analysisPromise = Promise.resolve(performAnalysis(validatedData))
@@ -55,24 +59,22 @@ export async function POST(request: NextRequest) {
     const pdfUrl = await Promise.race([pdfPromise, timeoutPromise]) as string
 
     // Create the report record
-    const report = await prisma.report.create({
-      data: {
-        contactRequestId,
-        pdfUrl,
-        projectedLifespanMonths: analysisResults.projectedLifespanMonths,
-        capitalAvoidance: analysisResults.capitalAvoidance,
-        p95SafeLifeMonths: analysisResults.p95SafeLifeMonths,
-      }
-    })
+    const reportId = `report_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    const report = {
+      id: reportId,
+      contactRequestId,
+      pdfUrl,
+      projectedLifespanMonths: analysisResults.projectedLifespanMonths,
+      capitalAvoidance: analysisResults.capitalAvoidance,
+      p95SafeLifeMonths: analysisResults.p95SafeLifeMonths,
+      createdAt: new Date().toISOString()
+    }
+    reports.set(reportId, report)
 
     // Update the contact request status
-    await prisma.contactRequest.update({
-      where: { id: contactRequestId },
-      data: {
-        status: 'REPORT_GENERATED',
-        reportId: report.id,
-      }
-    })
+    contactRequest.status = 'REPORT_GENERATED'
+    contactRequest.reportId = reportId
+    contactRequests.set(contactRequestId, contactRequest)
 
     // Send notification emails
     try {

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+
+// Simple in-memory storage (same as contact-request/route.ts)
+const contactRequests = new Map()
 
 export async function GET(
   request: NextRequest,
@@ -7,17 +9,7 @@ export async function GET(
 ) {
   const { id } = await params
   try {
-    const contactRequest = await prisma.contactRequest.findUnique({
-      where: { id },
-      select: {
-        id: true,
-        companyName: true,
-        contactName: true,
-        contactEmail: true,
-        status: true,
-        createdAt: true,
-      }
-    })
+    const contactRequest = contactRequests.get(id)
 
     if (!contactRequest) {
       return NextResponse.json(
@@ -26,7 +18,14 @@ export async function GET(
       )
     }
 
-    return NextResponse.json(contactRequest)
+    return NextResponse.json({
+      id: contactRequest.id,
+      companyName: contactRequest.companyName,
+      contactName: contactRequest.contactName,
+      contactEmail: contactRequest.contactEmail,
+      status: contactRequest.status,
+      createdAt: contactRequest.createdAt,
+    })
 
   } catch (error) {
     console.error('Error fetching contact request:', error)
