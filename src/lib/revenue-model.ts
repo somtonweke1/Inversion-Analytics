@@ -346,6 +346,59 @@ export class RevenueModel {
     }
   }
 
+  // Generate custom revenue projections
+  generateCustomProjections(params: {
+    initialAudits: number
+    auditConversionToMonitoring: number
+    auditConversionToSoftware: number
+    growthRateAudits: number
+    growthRateMonitoring: number
+    growthRateSoftware: number
+    years: number
+  }): RevenueProjection[] {
+    const projections: RevenueProjection[] = []
+    
+    let currentAudits = params.initialAudits
+    let currentMonitoringClients = 0
+    let currentSoftwareClients = 0
+
+    for (let year = 1; year <= params.years; year++) {
+      // Calculate new clients from audits
+      const newMonitoringClients = Math.floor(currentAudits * (params.auditConversionToMonitoring / 100))
+      const newSoftwareClients = Math.floor(currentAudits * (params.auditConversionToSoftware / 100))
+      
+      currentMonitoringClients += newMonitoringClients
+      currentSoftwareClients += newSoftwareClients
+
+      // Calculate revenue
+      const auditRevenue = currentAudits * 50000 // $50k per audit
+      const monitoringRevenue = currentMonitoringClients * 3000 * 12 // $3k/month
+      const softwareRevenue = currentSoftwareClients * 25000 // $25k/year
+
+      projections.push({
+        year,
+        auditRevenue,
+        monitoringRevenue,
+        softwareRevenue,
+        totalRevenue: auditRevenue + monitoringRevenue + softwareRevenue,
+        customers: {
+          audit: currentAudits,
+          monitoring: currentMonitoringClients,
+          software: currentSoftwareClients
+        },
+        profit: (auditRevenue + monitoringRevenue + softwareRevenue) * 0.6, // 60% margin
+        margin: 60
+      })
+
+      // Project growth for next year
+      currentAudits = Math.floor(currentAudits * (1 + params.growthRateAudits / 100))
+      currentMonitoringClients = Math.floor(currentMonitoringClients * (1 + params.growthRateMonitoring / 100))
+      currentSoftwareClients = Math.floor(currentSoftwareClients * (1 + params.growthRateSoftware / 100))
+    }
+
+    return projections
+  }
+
   // Calculate market opportunity
   getMarketOpportunity(): {
     totalAddressableMarket: number
