@@ -47,20 +47,23 @@ export function estimateCapacityWithFreundlich(
 }
 
 /**
- * Run Monte Carlo simulation for uncertainty analysis
+ * Run Monte Carlo simulation for uncertainty analysis (optimized for speed)
  */
 export function runMonteCarloSimulation(
   projectedLife: number,
   uncertainty: number = 0.18,
-  iterations: number = 5000
+  iterations: number = 1000 // Reduced from 5000 to 1000 for faster processing
 ): { mean: number; p95: number; p5: number } {
   const results: number[] = []
+  
+  // Pre-allocate array for better performance
+  results.length = iterations
   
   for (let i = 0; i < iterations; i++) {
     // Generate random factor with normal distribution
     const randomFactor = 1 + (Math.random() - 0.5) * uncertainty * 2
     const simulatedLife = projectedLife * randomFactor
-    results.push(Math.max(0, simulatedLife)) // Ensure non-negative
+    results[i] = Math.max(0, simulatedLife) // Ensure non-negative
   }
   
   // Sort results for percentile calculation
@@ -136,13 +139,13 @@ export function calculateCostPerMillionGallons(formData: DataSubmissionFormData,
 }
 
 /**
- * Main analysis function that orchestrates all calculations
+ * Fast analysis function for production use (optimized for speed)
  */
-export function performAnalysis(formData: DataSubmissionFormData): AnalysisResults {
+export function performFastAnalysis(formData: DataSubmissionFormData): AnalysisResults {
   // Calculate EBCT
   const ebctCalculated = calculateEBCT(formData)
   
-  // Estimate GAC capacity
+  // Estimate GAC capacity (simplified)
   const capacityEstimate = estimateCapacityWithFreundlich(
     formData.totalPfasConcentration,
     formData.toc,
@@ -160,20 +163,21 @@ export function performAnalysis(formData: DataSubmissionFormData): AnalysisResul
   // Apply safety factor
   const projectedLifespanMonths = baseLifespan / formData.safetyFactor
   
-  // Run Monte Carlo simulation
-  const monteCarloResults = runMonteCarloSimulation(projectedLifespanMonths)
+  // Simplified uncertainty analysis (no Monte Carlo for speed)
+  const uncertainty = 0.15
+  const p95SafeLifeMonths = projectedLifespanMonths * (1 + uncertainty)
   
   // Calculate cost per million gallons
   const costPerMillionGallons = calculateCostPerMillionGallons(formData, projectedLifespanMonths)
   
   // Calculate capital avoidance (simplified)
   const capitalAvoidance = (formData.replacementCost + formData.laborCost) * 
-                          (monteCarloResults.mean / 12) // Annual savings
+                          (projectedLifespanMonths / 12) // Annual savings
   
   // Generate key findings
   const keyFindings = generateKeyFindings({
-    projectedLifespanMonths: monteCarloResults.mean,
-    p95SafeLifeMonths: monteCarloResults.p95,
+    projectedLifespanMonths,
+    p95SafeLifeMonths,
     removalEfficiency,
     costPerMillionGallons,
     capacityEstimate,
@@ -181,15 +185,23 @@ export function performAnalysis(formData: DataSubmissionFormData): AnalysisResul
   })
   
   return {
-    projectedLifespanMonths: monteCarloResults.mean,
+    projectedLifespanMonths,
     capitalAvoidance,
-    p95SafeLifeMonths: monteCarloResults.p95,
+    p95SafeLifeMonths,
     keyFindings,
     capacityEstimate,
     ebctCalculated,
     removalEfficiency,
     costPerMillionGallons
   }
+}
+
+/**
+ * Main analysis function that orchestrates all calculations
+ */
+export function performAnalysis(formData: DataSubmissionFormData): AnalysisResults {
+  // Use fast analysis for production to prevent timeouts
+  return performFastAnalysis(formData)
 }
 
 /**

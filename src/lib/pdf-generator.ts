@@ -13,8 +13,16 @@ export async function generateReportPDF(
     // Import the PDF generation function dynamically
     const { pdf } = await import('@react-pdf/renderer')
     
-    // Create the PDF buffer
-    const pdfDoc = pdf(ReportPDF({ analysisResults, formData, contactRequest }))
+    // Create the PDF buffer with optimized settings
+    const pdfDoc = pdf(ReportPDF({ analysisResults, formData, contactRequest }), {
+      compress: true, // Enable compression for faster generation
+      info: {
+        Title: `GAC Analysis Report - ${contactRequest.companyName}`,
+        Author: 'Inversion Analytics',
+        Subject: 'GAC System Analysis',
+        Creator: 'Inversion Analytics Platform'
+      }
+    })
     const pdfStream = await pdfDoc.toBlob()
     const arrayBuffer = await pdfStream.arrayBuffer()
     const pdfBuffer = Buffer.from(arrayBuffer)

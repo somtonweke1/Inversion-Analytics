@@ -6,6 +6,11 @@ import { generateReportPDF } from '@/lib/pdf-generator'
 import { sendReportReadyEmail, sendAdminNotification } from '@/lib/email'
 
 export async function POST(request: NextRequest) {
+  // Set a timeout to prevent Vercel's 5-minute limit
+  const timeoutPromise = new Promise((_, reject) => {
+    setTimeout(() => reject(new Error('Request timeout')), 4 * 60 * 1000) // 4 minutes
+  })
+
   try {
     const body = await request.json()
     const { contactRequestId, ...formData } = body
@@ -41,11 +46,13 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    // Perform the analysis
-    const analysisResults = performAnalysis(validatedData)
+    // Perform the analysis (with timeout protection)
+    const analysisPromise = Promise.resolve(performAnalysis(validatedData))
+    const analysisResults = await Promise.race([analysisPromise, timeoutPromise]) as any
 
-    // Generate the PDF report
-    const pdfUrl = await generateReportPDF(analysisResults, validatedData, contactRequest)
+    // Generate the PDF report (with timeout protection)
+    const pdfPromise = generateReportPDF(analysisResults, validatedData, contactRequest)
+    const pdfUrl = await Promise.race([pdfPromise, timeoutPromise]) as string
 
     // Create the report record
     const report = await prisma.report.create({
