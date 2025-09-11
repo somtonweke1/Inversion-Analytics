@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { dataSubmissionSchema, type DataSubmissionFormData } from '@/lib/validations'
 import { Loader2, CheckCircle } from 'lucide-react'
-import { performMockAnalysis, generateMockReport } from '@/lib/mock-analysis'
+// import { performMockAnalysis, generateMockReport } from '@/lib/mock-analysis' // No longer needed - using real API
 
 interface ContactRequest {
   id: string
@@ -81,26 +81,33 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
         const { id } = await params
         setContactId(id)
         
-        // Mock contact request data
+        // Fetch real contact request data
+        const response = await fetch(`/api/contact-request/${id}`)
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        
+        const contactData = await response.json()
+        setContactRequest(contactData)
+      } catch (error) {
+        console.error('Error fetching contact request:', error)
+        // Fallback to mock data if API fails
         const mockContactRequest = {
-          id: id,
+          id: contactId,
           companyName: 'Demo Company',
           contactName: 'Demo User',
           contactEmail: 'demo@example.com',
           status: 'PENDING',
           createdAt: new Date().toISOString()
         }
-        
         setContactRequest(mockContactRequest)
-      } catch (error) {
-        console.error('Error fetching contact request:', error)
       } finally {
         setIsLoading(false)
       }
     }
 
     fetchContactRequest()
-  }, [params])
+  }, [params, contactId])
 
   const onSubmit = async (data: DataSubmissionFormData) => {
     setIsSubmitting(true)
@@ -110,38 +117,44 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
     
     try {
       setAnalysisStep('Submitting data...')
-      await new Promise(resolve => setTimeout(resolve, 1000))
       
-      setAnalysisStep('Processing analysis...')
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      // Submit to real API
+      const response = await fetch('/api/data-submission', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contactRequestId: contactId,
+          ...data,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`)
+      }
+
+      const result = await response.json()
       
-      // Perform mock analysis
-      const analysisResults = performMockAnalysis(data)
-      
-      setAnalysisStep('Generating report...')
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      
-      // Generate mock report
-      const report = generateMockReport(analysisResults, data, contactRequest)
-      
-      setAnalysisStep('Sending notifications...')
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      setAnalysisStep('Complete!')
+      await new Promise(resolve => setTimeout(resolve, 500))
       
       setSubmitSuccess(`Analysis completed successfully! 
       
 Key Results:
-• Projected Bed Life: ${analysisResults.projectedLifespanMonths} months
-• Capital Avoidance: $${analysisResults.capitalAvoidance.toLocaleString()}
-• Removal Efficiency: ${analysisResults.removalEfficiency.toFixed(1)}%
-• Cost per Million Gallons: $${analysisResults.costPerMillionGallons}
+• Projected Bed Life: ${result.analysisResults?.projectedLifespanMonths || 'N/A'} months
+• Capital Avoidance: $${result.analysisResults?.capitalAvoidance?.toLocaleString() || 'N/A'}
+• Removal Efficiency: ${result.analysisResults?.removalEfficiency?.toFixed(1) || 'N/A'}%
+• Cost per Million Gallons: $${result.analysisResults?.costPerMillionGallons || 'N/A'}
 
-Report ID: ${report.id}
+Report ID: ${result.reportId || 'N/A'}
 We'll send you the detailed report via email.`)
       setIsSubmitted(true)
       
     } catch (error) {
       console.error('Error submitting data:', error)
-      setSubmitError('There was an error submitting your data. Please try again.')
+      setSubmitError(`There was an error submitting your data: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setIsSubmitting(false)
       setAnalysisStep('')

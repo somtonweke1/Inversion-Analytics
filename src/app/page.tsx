@@ -17,24 +17,33 @@ export default function HomePage() {
     setIsSubmitting(true)
     
     const formData = new FormData(e.currentTarget)
-    const data = { // eslint-disable-line @typescript-eslint/no-unused-vars
+    const data = {
       companyName: formData.get('companyName') as string,
       contactName: formData.get('contactName') as string,
       contactEmail: formData.get('contactEmail') as string,
     }
-
-    // Generate a mock ID for immediate testing
-    const mockId = `contact_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
     
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      const response = await fetch('/api/contact-request', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const result = await response.json()
       
-      // Mock successful response
-      setIsDialogOpen(false)
-      const base = typeof window !== 'undefined' ? window.location.origin : ''
-      const link = `${base}/data-form/${mockId}`
-      alert(`Thank you! Your secure link: ${link}`)
+      if (result.success) {
+        setIsDialogOpen(false)
+        alert(`Thank you! Your secure link: ${result.dataFormUrl}`)
+      } else {
+        throw new Error(result.error || 'Unknown error')
+      }
       
     } catch (error) {
       console.error('Error submitting contact request:', error)
