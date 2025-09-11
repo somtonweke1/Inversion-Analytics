@@ -25,6 +25,9 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [submitSuccess, setSubmitSuccess] = useState<string | null>(null)
+  const [analysisStep, setAnalysisStep] = useState<string>('')
 
   const form = useForm<DataSubmissionFormData>({
     resolver: zodResolver(dataSubmissionSchema),
@@ -95,7 +98,12 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
 
   const onSubmit = async (data: DataSubmissionFormData) => {
     setIsSubmitting(true)
+    setSubmitError(null)
+    setSubmitSuccess(null)
+    setAnalysisStep('Validating data...')
+    
     try {
+      setAnalysisStep('Submitting data...')
       const response = await fetch('/api/data-submission', {
         method: 'POST',
         headers: {
@@ -107,16 +115,22 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
         }),
       })
 
+      setAnalysisStep('Processing analysis...')
+      const result = await response.json()
+
       if (response.ok) {
+        setAnalysisStep('Generating report...')
+        setSubmitSuccess('Analysis completed successfully! We\'ll process your data and send you the results via email.')
         setIsSubmitted(true)
       } else {
-        throw new Error('Failed to submit data')
+        setSubmitError(result.error || 'Failed to submit data. Please try again.')
       }
     } catch (error) {
       console.error('Error submitting data:', error)
-      alert('There was an error submitting your data. Please try again.')
+      setSubmitError('There was an error submitting your data. Please try again.')
     } finally {
       setIsSubmitting(false)
+      setAnalysisStep('')
     }
   }
 
@@ -176,6 +190,33 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            {/* Error Message */}
+            {submitError && (
+              <Card className="border-red-200 bg-red-50">
+                <CardContent className="pt-6">
+                  <div className="flex items-center space-x-2 text-red-600">
+                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                    <span className="font-medium">Error:</span>
+                    <span>{submitError}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Success Message */}
+            {submitSuccess && (
+              <Card className="border-green-200 bg-green-50">
+                <CardContent className="pt-6">
+                  <div className="flex items-center space-x-2 text-green-600">
+                    <CheckCircle className="h-5 w-5" />
+                    <span className="font-medium">Success:</span>
+                    <span>{submitSuccess}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
             {/* System Configuration */}
             <Card>
               <CardHeader>
@@ -790,12 +831,26 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
               </CardContent>
             </Card>
 
-            <div className="flex justify-end">
+            <div className="flex flex-col items-end space-y-4">
+              {isSubmitting && (
+                <Card className="w-full max-w-md border-blue-200 bg-blue-50">
+                  <CardContent className="pt-6">
+                    <div className="flex items-center space-x-2 text-blue-600">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span className="text-sm font-medium">{analysisStep}</span>
+                    </div>
+                    <div className="mt-2 w-full bg-blue-200 rounded-full h-2">
+                      <div className="bg-blue-600 h-2 rounded-full animate-pulse" style={{ width: '60%' }}></div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+              
               <Button type="submit" size="lg" disabled={isSubmitting}>
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Processing...
+                    Processing Analysis...
                   </>
                 ) : (
                   'Submit Analysis Request'
