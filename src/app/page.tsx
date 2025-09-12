@@ -54,9 +54,14 @@ export default function HomePage() {
               </div>
               <span className="text-xl font-semibold text-slate-900 tracking-tight">Inversion Analytics</span>
             </div>
-            <Button variant="ghost" size="sm" className="text-slate-700 hover:text-slate-900 hover:bg-slate-100" asChild>
-              <a href="/enterprise">Enterprise</a>
-            </Button>
+            <div className="flex items-center space-x-2">
+              <Button variant="ghost" size="sm" className="text-slate-700 hover:text-slate-900 hover:bg-slate-100" asChild>
+                <a href="/enterprise">Enterprise</a>
+              </Button>
+              <Button variant="ghost" size="sm" className="text-slate-700 hover:text-slate-900 hover:bg-slate-100" asChild>
+                <a href="/investors">Investors</a>
+              </Button>
+            </div>
           </div>
         </div>
       </nav>
