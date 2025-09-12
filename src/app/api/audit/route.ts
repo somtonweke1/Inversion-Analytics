@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { AuditEngine } from '@/lib/audit-engine'
 import { RevenueModel } from '@/lib/revenue-model'
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
-    const body = await request.json()
+    const body = await _request.json()
     
     // Validate required fields
     if (!body.facilityName || !body.facilityType || !body.currentGACSystem) {
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     )
 
     // Calculate ROI
-    const roi = revenueModel.calculateCustomerROI(salesProposal.recommendedTier, body.facilityType)
+    const roi = revenueModel.calculateCustomerROI(salesProposal.recommendedTier)
 
     // Generate comprehensive response
     const response = {
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const revenueModel = RevenueModel.getInstance()
     

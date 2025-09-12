@@ -99,7 +99,7 @@ export class MonitoringEngine {
     const recentData = data.slice(-24) // Last 24 readings
     const pressureTrend = this.calculateTrend(recentData.map(d => d.pressure))
     const flowTrend = this.calculateTrend(recentData.map(d => d.flowRate))
-    const efficiencyTrend = this.calculateEfficiencyTrend(recentData)
+    // const efficiencyTrend = this.calculateEfficiencyTrend(recentData)
     
     // Calculate current exhaustion based on pressure drop and efficiency
     const basePressure = recentData[0].pressure

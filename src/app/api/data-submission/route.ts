@@ -3,7 +3,7 @@ import { dataSubmissionSchema } from '@/lib/validations'
 import { performAnalysis } from '@/lib/analysis-engine'
 import { generateReportPDF } from '@/lib/pdf-generator'
 import { sendReportReadyEmail, sendAdminNotification } from '@/lib/email'
-import { getContactRequest, createDataSubmission, createReport } from '@/lib/storage'
+import { getContactRequest, reports, contactRequests } from '@/lib/storage'
 
 export async function POST(request: NextRequest) {
   // Set a timeout to prevent Vercel's 5-minute limit
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Save the data submission form using shared storage
-    const dataSubmission = createDataSubmission(contactRequestId, validatedData)
+    // const dataSubmission = createDataSubmission(contactRequestId, validatedData)
 
     // Perform the analysis (with timeout protection)
     const analysisPromise = Promise.resolve(performAnalysis(validatedData))

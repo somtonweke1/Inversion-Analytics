@@ -261,7 +261,7 @@ export class RevenueModel {
   }
 
   // Calculate ROI for a customer
-  calculateCustomerROI(tierName: string, customerType: string): {
+  calculateCustomerROI(tierName: string): {
     investment: number
     annualSavings: number
     paybackPeriod: number
@@ -381,13 +381,19 @@ export class RevenueModel {
         monitoringRevenue,
         softwareRevenue,
         totalRevenue: auditRevenue + monitoringRevenue + softwareRevenue,
+        costs: {
+          development: (auditRevenue + monitoringRevenue + softwareRevenue) * 0.15,
+          operations: (auditRevenue + monitoringRevenue + softwareRevenue) * 0.15,
+          sales: (auditRevenue + monitoringRevenue + softwareRevenue) * 0.10,
+          total: (auditRevenue + monitoringRevenue + softwareRevenue) * 0.4
+        },
         customers: {
           audit: currentAudits,
           monitoring: currentMonitoringClients,
           software: currentSoftwareClients
         },
         profit: (auditRevenue + monitoringRevenue + softwareRevenue) * 0.6, // 60% margin
-        margin: 60
+        margin: 0.6
       })
 
       // Project growth for next year

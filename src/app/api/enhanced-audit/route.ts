@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { performEnhancedAudit, EnhancedAuditRequest } from '@/lib/enhanced-audit-engine'
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
-    const body = await request.json()
+    const body = await _request.json()
     
     // Validate required fields for environmental engineering analysis
     if (!body.facilityName || !body.facilityType || !body.currentGACSystem || !body.waterQuality) {
@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Return information about environmental engineering analysis capabilities
     return NextResponse.json({

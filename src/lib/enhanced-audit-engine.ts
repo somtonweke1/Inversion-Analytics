@@ -280,30 +280,35 @@ export class EnhancedAuditEngine {
     return this.generateAuditResults(request, envAnalysis, technicalCredibility)
   }
   
-  private calculateTechnicalCredibility(envAnalysis: any): TechnicalCredibilityMetrics {
+  private calculateTechnicalCredibility(envAnalysis: Record<string, unknown>): TechnicalCredibilityMetrics {
     const { adsorptionIsotherm, massTransfer, reactorAnalysis, reactionKinetics, bedLife } = envAnalysis
     
     // Check Freundlich isotherm validity
-    const freundlichValid = adsorptionIsotherm.parameters.kf > 0 && 
-                           adsorptionIsotherm.parameters.n > 0.3 && 
-                           adsorptionIsotherm.parameters.n < 1.0
+    const isothermParams = (adsorptionIsotherm as Record<string, unknown>)?.parameters as Record<string, unknown>
+    const freundlichValid = (Number(isothermParams?.kf) || 0) > 0 && 
+                           (Number(isothermParams?.n) || 0) > 0.3 && 
+                           (Number(isothermParams?.n) || 0) < 1.0
     
     // Check mass transfer coefficients reasonableness
-    const massTransferReasonable = massTransfer.filmMassTransferCoefficient > 1e-6 && 
-                                  massTransfer.filmMassTransferCoefficient < 1e-3
+    const massTransferData = massTransfer as Record<string, unknown>
+    const massTransferReasonable = (Number(massTransferData?.filmMassTransferCoefficient) || 0) > 1e-6 && 
+                                  (Number(massTransferData?.filmMassTransferCoefficient) || 0) < 1e-3
     
     // Check reactor hydraulics optimality
-    const reactorOptimal = reactorAnalysis.pelectNumber > 10 && 
-                          reactorAnalysis.deadVolumeFraction < 0.2
+    const reactorData = reactorAnalysis as Record<string, unknown>
+    const reactorOptimal = (Number(reactorData?.pelectNumber) || 0) > 10 && 
+                          (Number(reactorData?.deadVolumeFraction) || 0) < 0.2
     
     // Check reaction kinetics accuracy
-    const kineticsAccurate = reactionKinetics.rateConstant > 0 && 
-                            reactionKinetics.removalEfficiency > 80
+    const kineticsData = reactionKinetics as Record<string, unknown>
+    const kineticsAccurate = (Number(kineticsData?.rateConstant) || 0) > 0 && 
+                            (Number(kineticsData?.removalEfficiency) || 0) > 80
     
     // Check bed life prediction reliability
-    const bedLifeReliable = bedLife.bedLifeDays > 30 && 
-                           bedLife.bedLifeDays < 2000 &&
-                           bedLife.capacityUtilization > 50
+    const bedLifeData = bedLife as Record<string, unknown>
+    const bedLifeReliable = (Number(bedLifeData?.bedLifeDays) || 0) > 30 && 
+                           (Number(bedLifeData?.bedLifeDays) || 0) < 2000 &&
+                           (Number(bedLifeData?.capacityUtilization) || 0) > 50
     
     // Calculate overall credibility
     const credibilityFactors = [
@@ -328,7 +333,7 @@ export class EnhancedAuditEngine {
   
   private generateAuditResults(
     request: EnhancedAuditRequest,
-    envAnalysis: any,
+    envAnalysis: Record<string, unknown>,
     technicalCredibility: TechnicalCredibilityMetrics
   ): EnhancedAuditResults {
     const { adsorptionIsotherm, massTransfer, reactorAnalysis, reactionKinetics, bedLife, costOptimization } = envAnalysis
@@ -341,45 +346,45 @@ export class EnhancedAuditEngine {
       
       environmentalAnalysis: {
         adsorptionIsotherm: {
-          type: adsorptionIsotherm.type,
-          parameters: adsorptionIsotherm.parameters,
+          type: String((adsorptionIsotherm as Record<string, unknown>)?.type || 'Freundlich'),
+          parameters: (adsorptionIsotherm as Record<string, unknown>)?.parameters as { kf: number; n: number } || { kf: 0, n: 0 },
           confidence: technicalCredibility.overallTechnicalCredibility
         },
         massTransfer: {
-          molecularDiffusivity: massTransfer.molecularDiffusivity,
-          filmMassTransferCoefficient: massTransfer.filmMassTransferCoefficient,
-          intraparticleDiffusivity: massTransfer.intraparticleDiffusivity,
-          overallMassTransferCoefficient: massTransfer.filmMassTransferCoefficient * 0.8
+          molecularDiffusivity: Number((massTransfer as Record<string, unknown>)?.molecularDiffusivity) || 0,
+          filmMassTransferCoefficient: Number((massTransfer as Record<string, unknown>)?.filmMassTransferCoefficient) || 0,
+          intraparticleDiffusivity: Number((massTransfer as Record<string, unknown>)?.intraparticleDiffusivity) || 0,
+          overallMassTransferCoefficient: (Number((massTransfer as Record<string, unknown>)?.filmMassTransferCoefficient) || 0) * 0.8
         },
         reactorAnalysis: {
-          meanResidenceTime: reactorAnalysis.meanResidenceTime,
-          pelectNumber: reactorAnalysis.pelectNumber,
-          dispersionNumber: reactorAnalysis.dispersionNumber,
-          deadVolumeFraction: reactorAnalysis.deadVolumeFraction,
-          shortCircuitingIndex: reactorAnalysis.shortCircuitingIndex,
-          hydraulicEfficiency: (1 - reactorAnalysis.deadVolumeFraction) * 100
+          meanResidenceTime: Number((reactorAnalysis as Record<string, unknown>)?.meanResidenceTime) || 0,
+          pelectNumber: Number((reactorAnalysis as Record<string, unknown>)?.pelectNumber) || 0,
+          dispersionNumber: Number((reactorAnalysis as Record<string, unknown>)?.dispersionNumber) || 0,
+          deadVolumeFraction: Number((reactorAnalysis as Record<string, unknown>)?.deadVolumeFraction) || 0,
+          shortCircuitingIndex: Number((reactorAnalysis as Record<string, unknown>)?.shortCircuitingIndex) || 0,
+          hydraulicEfficiency: (1 - (Number((reactorAnalysis as Record<string, unknown>)?.deadVolumeFraction) || 0)) * 100
         },
         reactionKinetics: {
-          rateConstant: reactionKinetics.rateConstant,
-          halfLife: reactionKinetics.halfLife,
-          removalEfficiency: reactionKinetics.removalEfficiency,
-          activationEnergy: reactionKinetics.activationEnergy
+          rateConstant: Number((reactionKinetics as Record<string, unknown>)?.rateConstant) || 0,
+          halfLife: Number((reactionKinetics as Record<string, unknown>)?.halfLife) || 0,
+          removalEfficiency: Number((reactionKinetics as Record<string, unknown>)?.removalEfficiency) || 0,
+          activationEnergy: Number((reactionKinetics as Record<string, unknown>)?.activationEnergy) || 0
         },
         bedLifePrediction: {
-          bedLifeHours: bedLife.bedLifeHours,
-          bedLifeDays: bedLife.bedLifeDays,
-          bedLifeMonths: Math.round(bedLife.bedLifeDays / 30),
-          breakthroughTime: bedLife.breakthroughTime,
-          capacityUtilization: bedLife.capacityUtilization,
-          recommendedChangeTime: bedLife.recommendedChangeTime
+          bedLifeHours: Number((bedLife as Record<string, unknown>)?.bedLifeHours) || 0,
+          bedLifeDays: Number((bedLife as Record<string, unknown>)?.bedLifeDays) || 0,
+          bedLifeMonths: Math.round((Number((bedLife as Record<string, unknown>)?.bedLifeDays) || 0) / 30),
+          breakthroughTime: Number((bedLife as Record<string, unknown>)?.breakthroughTime) || 0,
+          capacityUtilization: Number((bedLife as Record<string, unknown>)?.capacityUtilization) || 0,
+          recommendedChangeTime: Number((bedLife as Record<string, unknown>)?.recommendedChangeTime) || 0
         },
         costOptimization: {
-          optimizedChangeFrequency: costOptimization.optimizedChangeFrequency,
+          optimizedChangeFrequency: Number((costOptimization as Record<string, unknown>)?.optimizedChangeFrequency) || 0,
           currentAnnualCost: request.currentGACSystem.currentCosts.totalAnnual,
-          optimizedAnnualCost: request.currentGACSystem.currentCosts.totalAnnual - costOptimization.costSavings,
-          costSavings: costOptimization.costSavings,
-          roi: costOptimization.roi,
-          paybackPeriod: costOptimization.paybackPeriod
+          optimizedAnnualCost: request.currentGACSystem.currentCosts.totalAnnual - (Number((costOptimization as Record<string, unknown>)?.costSavings) || 0),
+          costSavings: Number((costOptimization as Record<string, unknown>)?.costSavings) || 0,
+          roi: Number((costOptimization as Record<string, unknown>)?.roi) || 0,
+          paybackPeriod: Number((costOptimization as Record<string, unknown>)?.paybackPeriod) || 0
         }
       },
       
@@ -387,33 +392,33 @@ export class EnhancedAuditEngine {
       
       financialAnalysis: {
         totalSavings: {
-          annual: costOptimization.costSavings,
-          fiveYear: costOptimization.costSavings * 5,
-          paybackPeriod: costOptimization.paybackPeriod / 12
+          annual: Number((costOptimization as Record<string, unknown>)?.costSavings) || 0,
+          fiveYear: (Number((costOptimization as Record<string, unknown>)?.costSavings) || 0) * 5,
+          paybackPeriod: (Number((costOptimization as Record<string, unknown>)?.paybackPeriod) || 0) / 12
         },
         costBreakdown: {
           currentCosts: request.currentGACSystem.currentCosts.totalAnnual,
-          optimizedCosts: request.currentGACSystem.currentCosts.totalAnnual - costOptimization.costSavings,
-          savings: costOptimization.costSavings
+          optimizedCosts: request.currentGACSystem.currentCosts.totalAnnual - (Number((costOptimization as Record<string, unknown>)?.costSavings) || 0),
+          savings: Number((costOptimization as Record<string, unknown>)?.costSavings) || 0
         },
         roi: {
           investment: 50000, // audit cost
-          annualReturn: costOptimization.costSavings,
-          fiveYearReturn: costOptimization.costSavings * 5,
-          paybackPeriod: costOptimization.paybackPeriod
+          annualReturn: Number((costOptimization as Record<string, unknown>)?.costSavings) || 0,
+          fiveYearReturn: (Number((costOptimization as Record<string, unknown>)?.costSavings) || 0) * 5,
+          paybackPeriod: Number((costOptimization as Record<string, unknown>)?.paybackPeriod) || 0
         }
       },
       
       technicalRecommendations: {
         sorbentOptimization: {
-          recommendedChangeFrequency: costOptimization.optimizedChangeFrequency,
+          recommendedChangeFrequency: Number((costOptimization as Record<string, unknown>)?.optimizedChangeFrequency) || 0,
           currentCapacityUtilization: 100, // assuming full utilization currently
-          optimizedCapacityUtilization: bedLife.capacityUtilization,
-          potentialSavings: costOptimization.costSavings
+          optimizedCapacityUtilization: Number((bedLife as Record<string, unknown>)?.capacityUtilization) || 0,
+          potentialSavings: Number((costOptimization as Record<string, unknown>)?.costSavings) || 0
         },
         systemDesign: {
-          currentEfficiency: reactionKinetics.removalEfficiency * 0.8, // assuming 80% of theoretical
-          optimizedEfficiency: reactionKinetics.removalEfficiency,
+          currentEfficiency: (Number((reactionKinetics as Record<string, unknown>)?.removalEfficiency) || 0) * 0.8, // assuming 80% of theoretical
+          optimizedEfficiency: Number((reactionKinetics as Record<string, unknown>)?.removalEfficiency) || 0,
           recommendedImprovements: [
             'Optimize bed hydraulic loading rate',
             'Improve distribution system',
@@ -433,8 +438,8 @@ export class EnhancedAuditEngine {
       },
       
       complianceAnalysis: {
-        currentComplianceStatus: reactionKinetics.removalEfficiency >= request.complianceRequirements.targetRemovalEfficiency ? 'compliant' : 'at_risk',
-        predictedComplianceDuration: bedLife.recommendedChangeTime,
+        currentComplianceStatus: (Number((reactionKinetics as Record<string, unknown>)?.removalEfficiency) || 0) >= request.complianceRequirements.targetRemovalEfficiency ? 'compliant' : 'at_risk',
+        predictedComplianceDuration: Number((bedLife as Record<string, unknown>)?.recommendedChangeTime) || 0,
         riskFactors: [
           'High PFAS loading rates',
           'Competition from natural organic matter',
@@ -456,7 +461,7 @@ export class EnhancedAuditEngine {
             'Optimize sorbent change schedule'
           ],
           cost: 15000,
-          expectedSavings: costOptimization.costSavings * 0.3
+          expectedSavings: (Number((costOptimization as Record<string, unknown>)?.costSavings) || 0) * 0.3
         },
         phase2: {
           duration: '2-4 months',
@@ -466,7 +471,7 @@ export class EnhancedAuditEngine {
             'Train operations staff'
           ],
           cost: 25000,
-          expectedSavings: costOptimization.costSavings * 0.5
+          expectedSavings: (Number((costOptimization as Record<string, unknown>)?.costSavings) || 0) * 0.5
         },
         phase3: {
           duration: '4-6 months',
@@ -476,14 +481,14 @@ export class EnhancedAuditEngine {
             'Continuous optimization'
           ],
           cost: 10000,
-          expectedSavings: costOptimization.costSavings * 0.2
+          expectedSavings: (Number((costOptimization as Record<string, unknown>)?.costSavings) || 0) * 0.2
         },
         totalImplementationCost: 50000,
-        totalExpectedSavings: costOptimization.costSavings,
+        totalExpectedSavings: Number((costOptimization as Record<string, unknown>)?.costSavings) || 0,
         timeline: '3-6 months'
       },
       
-      salesProposal: this.generateSalesProposal(request, costOptimization),
+      salesProposal: this.generateSalesProposal(request, costOptimization as Record<string, unknown>),
       
       marketContext: {
         totalMarket: '$3B water compliance market',
@@ -499,31 +504,31 @@ export class EnhancedAuditEngine {
     }
   }
   
-  private generateSalesProposal(request: EnhancedAuditRequest, costOptimization: any) {
+  private generateSalesProposal(request: EnhancedAuditRequest, costOptimization: Record<string, unknown>) {
     const { facilityType, facilitySize } = request
     
     let recommendedTier = 'Audit Service'
     let proposal = ''
     let valueProposition = ''
     let pricing = 50000
-    let expectedSavings = costOptimization.costSavings
+    let expectedSavings = Number(costOptimization.costSavings) || 0
     
     if (facilityType === 'data_center' && facilitySize === 'large') {
       recommendedTier = 'Enterprise Suite'
       pricing = 100000
-      expectedSavings = costOptimization.costSavings * 2
+      expectedSavings = (Number(costOptimization.costSavings) || 0) * 2
       proposal = 'For your large data center facility, we recommend our Enterprise Suite. This comprehensive solution includes everything needed to optimize your GAC systems across multiple facilities using advanced environmental engineering principles.'
       valueProposition = `Expected annual savings of $${Math.round(expectedSavings).toLocaleString()}+ with complete water treatment optimization based on fundamental mass transfer and adsorption theory.`
     } else if (facilityType === 'data_center') {
       recommendedTier = 'Monitoring Service'
       pricing = 3000
-      expectedSavings = costOptimization.costSavings * 0.8
+      expectedSavings = (Number(costOptimization.costSavings) || 0) * 0.8
       proposal = 'For your data center, we recommend starting with our Monitoring Service. This will provide immediate savings by optimizing your sorbent change schedule using real-time Freundlich isotherm analysis.'
       valueProposition = `Guaranteed $${Math.round(expectedSavings).toLocaleString()}+ annual savings with real-time monitoring and optimization based on reaction kinetics.`
     } else if (facilitySize === 'large') {
       recommendedTier = 'Software Platform'
       pricing = 25000
-      expectedSavings = costOptimization.costSavings * 1.2
+      expectedSavings = (Number(costOptimization.costSavings) || 0) * 1.2
       proposal = 'For your large facility, we recommend our Software Platform. This gives you in-house optimization capabilities with expert-level environmental engineering tools.'
       valueProposition = `Expected annual savings of $${Math.round(expectedSavings).toLocaleString()}+ with self-service optimization tools based on mass transfer theory.`
     } else {

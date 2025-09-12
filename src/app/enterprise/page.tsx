@@ -1,7 +1,7 @@
 'use client'
 
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card'
-import { BarChart3, DollarSign, TrendingUp, Users, Factory, Gauge, Clock, ShieldCheck, ArrowLeft, CheckCircle } from 'lucide-react'
+import { BarChart3, DollarSign, TrendingUp, Users, Factory, Gauge, CheckCircle, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { AUDIT_PRICE, MONITORING_PRICE_PER_MONTH, SOFTWARE_LICENSE_PRICE_ANNUAL } from '@/lib/revenue-model'
 import { Button } from '@/components/ui/button'

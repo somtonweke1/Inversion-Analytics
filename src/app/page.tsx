@@ -13,14 +13,7 @@ import {
   Target, 
   ArrowRight, 
   Loader2, 
-  Zap, 
-  CheckCircle, 
-  Award,
-  Users,
-  Factory,
-  Gauge,
-  Clock,
-  ArrowLeft
+  Zap
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -32,12 +25,8 @@ export default function HomePage() {
     e.preventDefault()
     setIsSubmitting(true)
     
-    const formData = new FormData(e.currentTarget)
-    const data = {
-      companyName: formData.get('companyName') as string,
-      contactName: formData.get('contactName') as string,
-      contactEmail: formData.get('contactEmail') as string,
-    }
+    // Form data is used for validation but not stored in this mock implementation
+    new FormData(e.currentTarget)
 
     try {
       // Generate a mock response that works in both local and production

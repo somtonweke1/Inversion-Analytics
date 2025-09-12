@@ -23,17 +23,15 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 
-interface ContactRequest {
-  id: string
-  companyName: string
-  contactName: string
-  contactEmail: string
-  status: string
-}
+// interface ContactRequest {
+//   id: string
+//   companyName: string
+//   contactName: string
+//   contactEmail: string
+//   status: string
+// }
 
 export default function DataFormPage({ params }: { params: Promise<{ id: string }> }) {
-  const [contactId, setContactId] = useState<string>('')
-  const [contactRequest, setContactRequest] = useState<ContactRequest | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -88,23 +86,13 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
 
   useEffect(() => {
     const resolveParams = async () => {
-      const resolvedParams = await params
-      setContactId(resolvedParams.id)
-      
-      // Mock contact request data
-      setContactRequest({
-        id: resolvedParams.id,
-        companyName: 'Sample Company',
-        contactName: 'John Doe',
-        contactEmail: 'john@sample.com',
-        status: 'active'
-      })
+      await params // Just resolve the params promise
       setIsLoading(false)
     }
     resolveParams()
   }, [params])
 
-  const onSubmit = async (data: DataSubmissionFormData) => {
+  const onSubmit = async () => {
     setIsSubmitting(true)
     setSubmitError(null)
     setSubmitSuccess(null)

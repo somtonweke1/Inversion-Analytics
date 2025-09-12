@@ -15,11 +15,9 @@ import {
   BarChart3, 
   ArrowUpRight,
   CheckCircle,
-  Star,
-  Award,
-  Zap,
   ArrowLeft,
-  Factory
+  Factory,
+  Award
 } from 'lucide-react'
 import Link from 'next/link'
 import { calculateRevenueProjections, getMarketAnalysis } from '@/lib/revenue-model'

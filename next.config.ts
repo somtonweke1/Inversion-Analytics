@@ -1,10 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  experimental: {
-    turbo: {
-      root: "/Users/somtonweke/Inversion Insurance/axiom-mvp"
-    }
+  turbopack: {
+    root: "/Users/somtonweke/Inversion Insurance/axiom-mvp"
   }
 };
 

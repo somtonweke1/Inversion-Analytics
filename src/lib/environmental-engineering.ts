@@ -130,7 +130,7 @@ export class EnvironmentalEngineeringAnalyzer {
     gacSystem: GACSystemParameters
   ): MassTransferParameters {
     const { temperature, ionicStrength } = waterQuality
-    const { hydraulicLoadingRate, particleSize, bedHeight } = gacSystem
+    const { hydraulicLoadingRate, particleSize } = gacSystem
     
     // Molecular diffusivity (Wilke-Chang equation for PFAS)
     const molecularDiffusivity = 1.2e-9 * Math.pow(temperature / 298, 1.5) * Math.exp(-ionicStrength * 0.5) // m²/s
@@ -160,7 +160,7 @@ export class EnvironmentalEngineeringAnalyzer {
   
   // Analyze reactor hydraulic characteristics
   analyzeReactorHydraulics(gacSystem: GACSystemParameters): ReactorAnalysis {
-    const { bedHeight, hydraulicLoadingRate, flowRate, bedVolume } = gacSystem
+    const { hydraulicLoadingRate, flowRate, bedVolume, bedHeight } = gacSystem
     
     // Mean residence time
     const meanResidenceTime = (bedVolume / flowRate) * 60 // convert to hours
@@ -243,8 +243,7 @@ export class EnvironmentalEngineeringAnalyzer {
   predictBedLife(
     waterQuality: WaterQualityParameters,
     gacSystem: GACSystemParameters,
-    adsorptionIsotherm: AdsorptionIsotherm,
-    massTransfer: MassTransferParameters
+    adsorptionIsotherm: AdsorptionIsotherm
   ): {
     bedLifeHours: number
     bedLifeDays: number
@@ -252,9 +251,9 @@ export class EnvironmentalEngineeringAnalyzer {
     capacityUtilization: number
     recommendedChangeTime: number
   } {
-    const { pfoa, pfos, flowRate } = waterQuality
-    const { bedVolume, bulkDensity } = gacSystem
-    const { kf, n } = adsorptionIsotherm.parameters
+    const { pfoa, pfos } = waterQuality
+    const { bedVolume, bulkDensity, flowRate } = gacSystem
+    const { kf = 0, n = 0 } = adsorptionIsotherm.parameters
     
     // Total GAC mass
     const gacMass = bedVolume * bulkDensity // kg
@@ -313,7 +312,7 @@ export class EnvironmentalEngineeringAnalyzer {
   
   // Calculate cost optimization based on technical analysis
   calculateCostOptimization(
-    bedLife: any,
+    bedLife: Record<string, unknown>,
     gacSystem: GACSystemParameters,
     currentCosts: {
       sorbentCost: number
@@ -326,11 +325,11 @@ export class EnvironmentalEngineeringAnalyzer {
     roi: number
     paybackPeriod: number
   } {
-    const { bedLifeDays, capacityUtilization } = bedLife
-    const { bedVolume, bulkDensity } = gacSystem
+    const { bedLifeDays } = bedLife
+    // const { bedVolume, bulkDensity } = gacSystem
     
     // Ensure we have valid bed life data
-    const validBedLifeDays = bedLifeDays && bedLifeDays > 0 ? bedLifeDays : 365
+    const validBedLifeDays = (bedLifeDays && Number(bedLifeDays) > 0) ? Number(bedLifeDays) : 365
     
     // Current change frequency (assumed annual)
     const currentChangeFrequency = 365 // days
@@ -339,11 +338,11 @@ export class EnvironmentalEngineeringAnalyzer {
     const optimizedChangeFrequency = validBedLifeDays * 0.8 // 80% of bed life
     
     // GAC replacement cost (assuming $10/kg typical GAC cost)
-    const gacMass = bedVolume * bulkDensity // kg
-    const gacCostPerChange = gacMass * 10 // $10/kg typical GAC cost
+    // const gacMass = bedVolume * bulkDensity // kg
+    // const gacCostPerChange = gacMass * 10 // $10/kg typical GAC cost
     
     // Annual costs - if bed life is longer, we change less frequently
-    const currentAnnualCost = currentCosts.totalAnnual // Use provided total annual cost
+    const currentAnnualCost = currentCosts.sorbentCost + currentCosts.laborCost + currentCosts.disposalCost
     
     // Calculate optimized cost based on better optimization and monitoring
     // Even if bed life is similar, we can optimize through better timing and monitoring
@@ -409,7 +408,7 @@ export function performEnvironmentalAnalysis(
   const reactionKinetics = analyzer.calculateReactionKinetics(waterQuality, gacSystem, massTransfer)
   
   // Predict bed life
-  const bedLife = analyzer.predictBedLife(waterQuality, gacSystem, adsorptionIsotherm, massTransfer)
+  const bedLife = analyzer.predictBedLife(waterQuality, gacSystem, adsorptionIsotherm)
   
   // Calculate cost optimization
   const costOptimization = analyzer.calculateCostOptimization(bedLife, gacSystem, currentCosts)

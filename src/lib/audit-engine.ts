@@ -101,9 +101,9 @@ export class AuditEngine {
       facilityName: request.facilityName,
       totalSavings: savings,
       recommendations: recommendations,
-      implementationPlan: await this.createImplementationPlan(recommendations),
+      implementationPlan: await this.createImplementationPlan(),
       riskAssessment: await this.assessRisks(analysis, request),
-      monitoringRecommendations: await this.generateMonitoringPlan(request)
+      monitoringRecommendations: await this.generateMonitoringPlan()
     }
   }
 
@@ -153,9 +153,9 @@ export class AuditEngine {
     return (actualFlow / designFlow) * 100
   }
 
-  private async generateRecommendations(analysis: any, request: AuditRequest) {
+  private async generateRecommendations(analysis: Record<string, unknown>, request: AuditRequest) {
     const sorbentOptimization = this.optimizeSorbentUsage(analysis, request)
-    const systemDesign = this.optimizeSystemDesign(analysis, request)
+    const systemDesign = this.optimizeSystemDesign(analysis)
     const operationalImprovements = this.optimizeOperations(analysis, request)
     
     return {
@@ -165,10 +165,10 @@ export class AuditEngine {
     }
   }
 
-  private optimizeSorbentUsage(analysis: any, request: AuditRequest) {
+  private optimizeSorbentUsage(analysis: Record<string, unknown>, request: AuditRequest) {
     const currentCost = request.currentGACSystem.currentCosts.totalAnnual
-    const currentEfficiency = analysis.currentEfficiency
-    const optimalEfficiency = analysis.optimalEfficiency
+    const currentEfficiency = Number(analysis.currentEfficiency) || 0
+    const optimalEfficiency = Number(analysis.optimalEfficiency) || 0
     
     // Calculate optimized costs
     const efficiencyImprovement = (optimalEfficiency - currentEfficiency) / 100
@@ -182,7 +182,7 @@ export class AuditEngine {
     }
   }
 
-  private calculateOptimalChangeFrequency(analysis: any, request: AuditRequest): number {
+  private calculateOptimalChangeFrequency(analysis: Record<string, unknown>, request: AuditRequest): number {
     // Based on sorbent exhaustion modeling
     const { waterQuality } = request
     const flowRate = waterQuality.flowRate
@@ -198,15 +198,15 @@ export class AuditEngine {
     return Math.max(daysToExhaustion * 0.8, 30) // Change at 80% capacity, minimum 30 days
   }
 
-  private optimizeSystemDesign(analysis: any, request: AuditRequest) {
+  private optimizeSystemDesign(analysis: Record<string, unknown>) {
     return {
-      currentEfficiency: analysis.currentEfficiency,
-      optimizedEfficiency: analysis.optimalEfficiency,
-      capacityUtilization: analysis.capacityUtilization
+      currentEfficiency: Number(analysis.currentEfficiency) || 0,
+      optimizedEfficiency: Number(analysis.optimalEfficiency) || 0,
+      capacityUtilization: Number(analysis.capacityUtilization) || 0
     }
   }
 
-  private optimizeOperations(analysis: any, request: AuditRequest) {
+  private optimizeOperations(analysis: Record<string, unknown>, request: AuditRequest) {
     const currentLaborCost = request.currentGACSystem.currentCosts.laborCost
     const monitoringUpgrade = 5000 // Cost of monitoring system
     const automationSavings = currentLaborCost * 0.3 // 30% labor reduction
@@ -219,9 +219,9 @@ export class AuditEngine {
     }
   }
 
-  private async calculateSavings(analysis: any, recommendations: any) {
-    const sorbentSavings = recommendations.sorbentOptimization.savings
-    const operationalSavings = recommendations.operationalImprovements.automationSavings
+  private async calculateSavings(analysis: Record<string, unknown>, recommendations: Record<string, unknown>) {
+    const sorbentSavings = Number((recommendations.sorbentOptimization as Record<string, unknown>)?.savings) || 0
+    const operationalSavings = Number((recommendations.operationalImprovements as Record<string, unknown>)?.automationSavings) || 0
     const totalAnnualSavings = sorbentSavings + operationalSavings
     
     return {
@@ -231,12 +231,12 @@ export class AuditEngine {
     }
   }
 
-  private calculatePaybackPeriod(annualSavings: number, recommendations: any): number {
-    const totalInvestment = recommendations.operationalImprovements.monitoringUpgrade
+  private calculatePaybackPeriod(annualSavings: number, recommendations: Record<string, unknown>): number {
+    const totalInvestment = Number((recommendations.operationalImprovements as Record<string, unknown>)?.monitoringUpgrade) || 0
     return totalInvestment / annualSavings
   }
 
-  private async createImplementationPlan(recommendations: any) {
+  private async createImplementationPlan() {
     return {
       phase1: [
         "Install monitoring sensors",
@@ -257,11 +257,11 @@ export class AuditEngine {
     }
   }
 
-  private async assessRisks(analysis: any, request: AuditRequest) {
-    const complianceRisk = analysis.currentEfficiency < request.complianceRequirements.targetRemovalEfficiency ? 'high' : 'low'
-    const operationalRisk = analysis.capacityUtilization > 90 ? 'high' : 'medium'
-    const financialRisk = request.budgetConstraints?.maxOpEx ? 
-      (request.currentGACSystem.currentCosts.totalAnnual > request.budgetConstraints.maxOpEx ? 'high' : 'low') : 'low'
+  private async assessRisks(analysis: Record<string, unknown>, _request: AuditRequest) {
+    const complianceRisk = (Number(analysis.currentEfficiency) < _request.complianceRequirements.targetRemovalEfficiency ? 'high' : 'low') as 'low' | 'medium' | 'high'
+    const operationalRisk = (Number(analysis.capacityUtilization) > 90 ? 'high' : 'medium') as 'low' | 'medium' | 'high'
+    const financialRisk = (_request.budgetConstraints?.maxOpEx ? 
+      (_request.currentGACSystem.currentCosts.totalAnnual > _request.budgetConstraints.maxOpEx ? 'high' : 'low') : 'low') as 'low' | 'medium' | 'high'
     
     return {
       complianceRisk,
@@ -270,7 +270,7 @@ export class AuditEngine {
     }
   }
 
-  private async generateMonitoringPlan(request: AuditRequest) {
+  private async generateMonitoringPlan() {
     return {
       requiredSensors: [
         "Pressure transducers",

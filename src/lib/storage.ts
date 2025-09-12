@@ -6,7 +6,7 @@ export const dataSubmissions = new Map()
 export const reports = new Map()
 
 // Helper functions for data management
-export function createContactRequest(data: any) {
+export function createContactRequest(data: Record<string, unknown>) {
   const contactId = `contact_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   const contactRequest = {
     id: contactId,
@@ -25,7 +25,7 @@ export function getContactRequest(id: string) {
   return contactRequests.get(id)
 }
 
-export function createDataSubmission(contactRequestId: string, data: any) {
+export function createDataSubmission(contactRequestId: string, data: Record<string, unknown>) {
   const submissionId = `submission_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   const dataSubmission = {
     id: submissionId,
@@ -42,7 +42,7 @@ export function getDataSubmission(id: string) {
   return dataSubmissions.get(id)
 }
 
-export function createReport(data: any) {
+export function createReport(data: Record<string, unknown>) {
   const reportId = `report_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   const report = {
     id: reportId,
