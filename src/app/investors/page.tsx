@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { 
   TrendingUp, 
   DollarSign, 
@@ -17,30 +19,38 @@ import {
   Award,
   Zap
 } from 'lucide-react'
+import { calculateRevenueProjections, getMarketAnalysis } from '@/lib/revenue-model'
 
 export default function InvestorsPage() {
-  const [selectedYear, setSelectedYear] = useState(5)
+  const [initialAudits, setInitialAudits] = useState(1)
+  const [auditConversionToMonitoring, setAuditConversionToMonitoring] = useState(60) // %
+  const [auditConversionToSoftware, setAuditConversionToSoftware] = useState(10) // %
+  const [growthRateAudits, setGrowthRateAudits] = useState(50) // %
+  const [growthRateMonitoring, setGrowthRateMonitoring] = useState(75) // %
+  const [growthRateSoftware, setGrowthRateSoftware] = useState(50) // %
 
-  const revenueProjections = [
-    { year: 1, revenue: 50000, cumulative: 50000, growth: 0 },
-    { year: 2, revenue: 50000, cumulative: 100000, growth: 0 },
-    { year: 3, revenue: 50000, cumulative: 150000, growth: 0 },
-    { year: 4, revenue: 50000, cumulative: 200000, growth: 0 },
-    { year: 5, revenue: 50000, cumulative: 250000, growth: 0 }
-  ]
+  const revenueProjections = calculateRevenueProjections(
+    initialAudits,
+    auditConversionToMonitoring,
+    auditConversionToSoftware,
+    growthRateAudits,
+    growthRateMonitoring,
+    growthRateSoftware
+  )
+  const marketAnalysis = getMarketAnalysis()
 
   const marketMetrics = [
     {
       title: "Total Addressable Market",
-      value: "$3B",
+      value: `$${marketAnalysis.totalAddressableMarket}B`,
       description: "Global water compliance market",
       icon: Globe,
       color: "text-blue-600"
     },
     {
       title: "5-Year Target",
-      value: "$30M",
-      description: "1% market share goal",
+      value: `$${marketAnalysis.targetRevenue5Years}M`,
+      description: `${marketAnalysis.targetMarketShare}% market share goal`,
       icon: Target,
       color: "text-green-600"
     },
@@ -137,34 +147,75 @@ export default function InvestorsPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-            {/* Revenue Chart */}
+            {/* Interactive Revenue Projection Tool */}
             <Card className="p-6">
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <BarChart3 className="w-5 h-5 mr-2 text-slate-600" />
                   Projection Inputs
                 </CardTitle>
+                <CardDescription>Adjust parameters to see revenue projections</CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {revenueProjections.map((projection) => (
-                    <div key={projection.year} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-slate-900 text-white rounded-full flex items-center justify-center text-sm font-medium">
-                          {projection.year}
-                        </div>
-                        <span className="font-medium text-slate-900">Year {projection.year}</span>
-                      </div>
-                      <div className="text-right">
-                        <div className="font-semibold text-slate-900">
-                          ${projection.revenue.toLocaleString()}
-                        </div>
-                        <div className="text-sm text-slate-600">
-                          Cumulative: ${projection.cumulative.toLocaleString()}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+              <CardContent className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="initialAudits" className="text-slate-700 font-medium">Initial Audit Contracts (Year 1)</Label>
+                  <Input 
+                    id="initialAudits" 
+                    type="number" 
+                    value={initialAudits} 
+                    onChange={(e) => setInitialAudits(parseInt(e.target.value))} 
+                    className="border-slate-200 focus:border-slate-400 focus:ring-slate-400"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="auditConversionToMonitoring" className="text-slate-700 font-medium">Audit Conversion to Monitoring (%)</Label>
+                  <Input 
+                    id="auditConversionToMonitoring" 
+                    type="number" 
+                    value={auditConversionToMonitoring} 
+                    onChange={(e) => setAuditConversionToMonitoring(parseInt(e.target.value))} 
+                    className="border-slate-200 focus:border-slate-400 focus:ring-slate-400"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="auditConversionToSoftware" className="text-slate-700 font-medium">Audit Conversion to Software (%)</Label>
+                  <Input 
+                    id="auditConversionToSoftware" 
+                    type="number" 
+                    value={auditConversionToSoftware} 
+                    onChange={(e) => setAuditConversionToSoftware(parseInt(e.target.value))} 
+                    className="border-slate-200 focus:border-slate-400 focus:ring-slate-400"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="growthRateAudits" className="text-slate-700 font-medium">Annual Audit Growth Rate (%)</Label>
+                  <Input 
+                    id="growthRateAudits" 
+                    type="number" 
+                    value={growthRateAudits} 
+                    onChange={(e) => setGrowthRateAudits(parseInt(e.target.value))} 
+                    className="border-slate-200 focus:border-slate-400 focus:ring-slate-400"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="growthRateMonitoring" className="text-slate-700 font-medium">Annual Monitoring Growth Rate (%)</Label>
+                  <Input 
+                    id="growthRateMonitoring" 
+                    type="number" 
+                    value={growthRateMonitoring} 
+                    onChange={(e) => setGrowthRateMonitoring(parseInt(e.target.value))} 
+                    className="border-slate-200 focus:border-slate-400 focus:ring-slate-400"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="growthRateSoftware" className="text-slate-700 font-medium">Annual Software Growth Rate (%)</Label>
+                  <Input 
+                    id="growthRateSoftware" 
+                    type="number" 
+                    value={growthRateSoftware} 
+                    onChange={(e) => setGrowthRateSoftware(parseInt(e.target.value))} 
+                    className="border-slate-200 focus:border-slate-400 focus:ring-slate-400"
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -178,18 +229,26 @@ export default function InvestorsPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-6">
-                  {financialHighlights.map((highlight, index) => (
-                    <div key={index} className="flex items-center justify-between py-3 border-b border-slate-200 last:border-b-0">
-                      <div>
-                        <div className="font-medium text-slate-900">{highlight.metric}</div>
-                        <div className="text-sm text-slate-600">{highlight.growth}</div>
+                <div className="space-y-4">
+                  {revenueProjections.map((projection) => (
+                    <div key={projection.year} className="flex items-center justify-between py-3 border-b border-slate-200 last:border-b-0">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 bg-slate-900 text-white rounded-full flex items-center justify-center text-sm font-medium">
+                          {projection.year}
+                        </div>
+                        <span className="font-medium text-slate-900">Year {projection.year} Total Revenue</span>
                       </div>
                       <div className="text-right">
-                        <div className="text-xl font-bold text-slate-900">{highlight.value}</div>
+                        <div className="text-lg font-bold text-slate-900">${projection.totalRevenue.toLocaleString()}</div>
                       </div>
                     </div>
                   ))}
+                  <div className="flex items-center justify-between pt-4 mt-4 border-t border-slate-200">
+                    <span className="font-semibold text-slate-900">5-Year Cumulative Revenue</span>
+                    <span className="text-xl font-bold text-slate-900">
+                      ${revenueProjections.reduce((sum: number, p: any) => sum + p.totalRevenue, 0).toLocaleString()}
+                    </span>
+                  </div>
                 </div>
               </CardContent>
             </Card>
