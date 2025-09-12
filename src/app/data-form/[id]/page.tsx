@@ -21,6 +21,7 @@ import {
   Target,
   TrendingUp
 } from 'lucide-react'
+import Link from 'next/link'
 
 interface ContactRequest {
   id: string
@@ -165,10 +166,10 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900 font-medium" asChild>
-                  <a href="/">
-                    <ArrowLeft className="h-4 w-4 mr-2" />
-                    Back to Home
-                  </a>
+                <Link href="/">
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Back to Home
+                </Link>
                 </Button>
               </div>
               <div className="flex items-center space-x-3">
@@ -191,7 +192,7 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
                 Analysis Complete!
               </h1>
               <p className="text-xl text-slate-600 mb-8 leading-relaxed">
-                Thank you for submitting your data. We'll process your analysis and send you the results via email.
+                Thank you for submitting your data. We&apos;ll process your analysis and send you the results via email.
               </p>
             </div>
 
@@ -218,7 +219,7 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
 
             <div className="mt-12">
               <Button size="lg" className="bg-slate-900 hover:bg-slate-800 text-white px-10 py-4 text-lg font-medium rounded-xl" asChild>
-                <a href="/">Return to Home</a>
+                <Link href="/">Return to Home</Link>
               </Button>
             </div>
           </div>
@@ -235,10 +236,10 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900 font-medium" asChild>
-                <a href="/">
+                <Link href="/">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Home
-                </a>
+                </Link>
               </Button>
             </div>
             <div className="flex items-center space-x-3">

@@ -2,6 +2,7 @@
 
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card'
 import { BarChart3, DollarSign, TrendingUp, Users, Factory, Gauge, Clock, ShieldCheck, ArrowLeft, CheckCircle } from 'lucide-react'
+import Link from 'next/link'
 import { AUDIT_PRICE, MONITORING_PRICE_PER_MONTH, SOFTWARE_LICENSE_PRICE_ANNUAL } from '@/lib/revenue-model'
 import { Button } from '@/components/ui/button'
 
@@ -15,10 +16,10 @@ export default function EnterpriseDashboard() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900 font-medium" asChild>
-                <a href="/">
+                <Link href="/">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Home
-                </a>
+                </Link>
               </Button>
             </div>
             <div className="flex items-center space-x-3">
@@ -75,7 +76,7 @@ export default function EnterpriseDashboard() {
                   <ul className="space-y-4 mb-8">
                     <li className="flex items-start space-x-3 text-slate-700">
                       <div className="w-2 h-2 bg-slate-400 rounded-full mt-2 flex-shrink-0"></div>
-                      <span className="text-base">Guaranteed $200k+ savings or it's free</span>
+                      <span className="text-base">Guaranteed $200k+ savings or it&apos;s free</span>
                     </li>
                     <li className="flex items-start space-x-3 text-slate-700">
                       <div className="w-2 h-2 bg-slate-400 rounded-full mt-2 flex-shrink-0"></div>

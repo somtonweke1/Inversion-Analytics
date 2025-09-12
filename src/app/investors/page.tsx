@@ -21,6 +21,7 @@ import {
   ArrowLeft,
   Factory
 } from 'lucide-react'
+import Link from 'next/link'
 import { calculateRevenueProjections, getMarketAnalysis } from '@/lib/revenue-model'
 
 export default function InvestorsPage() {
@@ -111,10 +112,10 @@ export default function InvestorsPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900 font-medium" asChild>
-                <a href="/">
+                <Link href="/">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Home
-                </a>
+                </Link>
               </Button>
             </div>
             <div className="flex items-center space-x-3">
@@ -254,7 +255,7 @@ export default function InvestorsPage() {
                     <div className="flex items-center justify-between pt-6 mt-6 border-t border-slate-200">
                       <span className="font-semibold text-slate-900 text-lg">5-Year Cumulative Revenue</span>
                       <span className="text-2xl font-bold text-slate-900">
-                        ${revenueProjections.reduce((sum: number, p: any) => sum + p.totalRevenue, 0).toLocaleString()}
+                        ${revenueProjections.reduce((sum: number, p: { totalRevenue: number }) => sum + p.totalRevenue, 0).toLocaleString()}
                       </span>
                     </div>
                   </div>

@@ -22,6 +22,7 @@ import {
   Clock,
   ArrowLeft
 } from 'lucide-react'
+import Link from 'next/link'
 
 export default function HomePage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -71,11 +72,11 @@ export default function HomePage() {
             </div>
             <div className="flex items-center space-x-8">
               <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900 font-medium" asChild>
-                <a href="/enterprise">Enterprise</a>
+                <Link href="/enterprise">Enterprise</Link>
               </Button>
               <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900 font-medium" asChild>
-                <a href="/investors">Investors</a>
-            </Button>
+                <Link href="/investors">Investors</Link>
+              </Button>
             </div>
           </div>
         </div>
@@ -163,7 +164,7 @@ export default function HomePage() {
                     </div>
                     <div>
                       <CardTitle className="text-xl text-slate-900 font-semibold">Guaranteed Savings</CardTitle>
-                      <CardDescription className="text-slate-600 font-medium">$200k+ or it's free</CardDescription>
+                      <CardDescription className="text-slate-600 font-medium">$200k+ or it&apos;s free</CardDescription>
                     </div>
                 </div>
               </CardHeader>
