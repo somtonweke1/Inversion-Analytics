@@ -13,20 +13,26 @@ import {
   Target, 
   ArrowRight, 
   Loader2, 
-  Zap
+  Zap,
+  CheckCircle
 } from 'lucide-react'
 import Link from 'next/link'
 
 export default function HomePage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
+  const [successData, setSuccessData] = useState<{
+    companyName: string
+    dataFormUrl: string
+  } | null>(null)
 
   const handleContactSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
     
-    // Form data is used for validation but not stored in this mock implementation
-    new FormData(e.currentTarget)
+    const formData = new FormData(e.currentTarget)
+    const companyName = formData.get('companyName') as string
 
     try {
       // Generate a mock response that works in both local and production
@@ -36,8 +42,9 @@ export default function HomePage() {
       const base = typeof window !== 'undefined' ? window.location.origin : ''
       const dataFormUrl = `${base}/data-form/${mockId}`
       
-        setIsDialogOpen(false)
-      alert(`Thank you! Your secure link: ${dataFormUrl}`)
+      setIsDialogOpen(false)
+      setSuccessData({ companyName, dataFormUrl })
+      setShowSuccess(true)
       
     } catch (error) {
       console.error('Error submitting contact request:', error)
@@ -263,6 +270,78 @@ export default function HomePage() {
           </footer>
         </div>
       </div>
+
+      {/* Success Modal */}
+      <Dialog open={showSuccess} onOpenChange={setShowSuccess}>
+        <DialogContent className="sm:max-w-2xl">
+          <div className="text-center py-8">
+            <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-6">
+              <CheckCircle className="h-8 w-8 text-green-600" />
+            </div>
+            
+            <h3 className="text-2xl font-bold text-slate-900 mb-4">
+              🎉 Success! Your Analysis Request is Ready
+            </h3>
+            
+            <p className="text-lg text-slate-600 mb-6">
+              Thank you, <span className="font-semibold text-slate-900">{successData?.companyName}</span>! 
+              Your secure data submission link has been generated.
+            </p>
+
+            <div className="bg-slate-50 rounded-xl p-6 mb-6">
+              <h4 className="text-sm font-medium text-slate-700 mb-3">Your Secure Data Form Link:</h4>
+              <div className="bg-white rounded-lg p-4 border border-slate-200">
+                <code className="text-sm text-slate-800 break-all">
+                  {successData?.dataFormUrl}
+                </code>
+              </div>
+              <p className="text-xs text-slate-500 mt-2">
+                This link is unique to your request and will expire in 7 days
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <Button 
+                onClick={() => window.open(successData?.dataFormUrl, '_blank')}
+                className="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 px-6 text-lg font-medium rounded-xl"
+              >
+                <BarChart3 className="mr-2 h-5 w-5" />
+                Start Your Analysis
+              </Button>
+              
+              <div className="flex space-x-3">
+                <Button 
+                  variant="outline" 
+                  onClick={() => {
+                    navigator.clipboard.writeText(successData?.dataFormUrl || '')
+                    alert('Link copied to clipboard!')
+                  }}
+                  className="flex-1 border-slate-200 text-slate-700 hover:bg-slate-50"
+                >
+                  📋 Copy Link
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowSuccess(false)}
+                  className="flex-1 border-slate-200 text-slate-700 hover:bg-slate-50"
+                >
+                  ✉️ Email Me This Link
+                </Button>
+              </div>
+            </div>
+
+            <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+              <h5 className="text-sm font-medium text-blue-900 mb-2">What happens next?</h5>
+              <ul className="text-sm text-blue-800 space-y-1 text-left">
+                <li>• Complete the data form with your GAC system details</li>
+                <li>• Our AI will analyze your system using advanced algorithms</li>
+                <li>• Receive a comprehensive optimization report within 24 hours</li>
+                <li>• Get guaranteed savings of $200k+ or the analysis is free</li>
+              </ul>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
