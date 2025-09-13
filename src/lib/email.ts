@@ -37,7 +37,7 @@ export async function sendDataFormEmail({
 }) {
   return await safeEmailSend(async () => {
     const { data, error } = await resend.emails.send({
-      from: 'Inversion Analytics <noreply@inversionanalytics.com>',
+      from: 'Inversion Analytics <onboarding@resend.dev>',
       to: [contactEmail],
       subject: 'Complete Your GAC System Analysis - Inversion Analytics',
       react: EmailWithLink({
@@ -75,7 +75,7 @@ export async function sendReportReadyEmail({
 }) {
   return await safeEmailSend(async () => {
     const { data, error } = await resend.emails.send({
-      from: 'Inversion Analytics <noreply@inversionanalytics.com>',
+      from: 'Inversion Analytics <onboarding@resend.dev>',
       to: [contactEmail],
       subject: 'Your GAC System Analysis is Ready - Inversion Analytics',
       react: ReportReadyEmail({
@@ -112,7 +112,7 @@ export async function sendAdminNotification({
 }) {
   return await safeEmailSend(async () => {
     const { data, error } = await resend.emails.send({
-      from: 'Inversion Analytics <noreply@inversionanalytics.com>',
+      from: 'Inversion Analytics <onboarding@resend.dev>',
       to: [process.env.ADMIN_EMAIL || 'admin@axiomanalytics.com'],
       subject: `New GAC Analysis Completed - ${companyName}`,
       html: `
