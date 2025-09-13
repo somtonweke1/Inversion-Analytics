@@ -342,44 +342,6 @@ export default function AnalysisSuccessPage({ params }: { params: Promise<{ id: 
             </div>
           </div>
 
-          {/* View Report Section */}
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-8 mb-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <BarChart3 className="h-8 w-8 text-blue-600" />
-              </div>
-              <h3 className="text-2xl font-semibold text-blue-900 mb-4">
-                Your Comprehensive Analysis Report is Ready
-              </h3>
-              <p className="text-blue-800 mb-8 max-w-2xl mx-auto">
-                View your detailed GAC system analysis with specific recommendations, cost breakdowns, and implementation roadmap.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button 
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg font-medium"
-                  onClick={() => window.open(`/report/${analysisResults.id}`, '_blank')}
-                >
-                  <BarChart3 className="h-5 w-5 mr-2" />
-                  View Full Report
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="border-blue-300 text-blue-700 hover:bg-blue-50 px-8 py-4 text-lg font-medium"
-                  onClick={() => {
-                    // Simulate downloading the report
-                    const link = document.createElement('a')
-                    link.href = `/api/report/${analysisResults.id}/download`
-                    link.download = `GAC-Analysis-Report-${analysisResults.companyName.replace(/\s+/g, '-')}.pdf`
-                    link.click()
-                  }}
-                >
-                  <Activity className="h-5 w-5 mr-2" />
-                  Download PDF
-                </Button>
-              </div>
-            </div>
-          </div>
-
           {/* Contact Information */}
           <div className="bg-white rounded-xl border border-gray-200 p-8">
             <div className="text-center">
