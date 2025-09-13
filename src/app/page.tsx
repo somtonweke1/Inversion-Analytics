@@ -337,34 +337,41 @@ export default function HomePage() {
                 >
                   📋 Copy Link
                 </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={async () => {
-                    try {
-                      const response = await fetch('/api/send-data-form-email', {
-                        method: 'POST',
-                        headers: {
-                          'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                          dataFormUrl: successData?.dataFormUrl,
-                          companyName: successData?.companyName
-                        }),
-                      })
-                      
-                      if (response.ok) {
-                        alert('Link sent to your email!')
-                      } else {
-                        alert('Email sending is not configured yet. Please copy the link manually.')
-                      }
-                    } catch {
-                      alert('Email sending is not configured yet. Please copy the link manually.')
-                    }
-                  }}
-                  className="flex-1 border-slate-200 text-slate-700 hover:bg-slate-50"
-                >
-                  ✉️ Email Me This Link
-                </Button>
+                     <Button 
+                       variant="outline" 
+                       onClick={async () => {
+                         try {
+                           const response = await fetch('/api/send-data-form-email', {
+                             method: 'POST',
+                             headers: {
+                               'Content-Type': 'application/json',
+                             },
+                             body: JSON.stringify({
+                               dataFormUrl: successData?.dataFormUrl,
+                               companyName: successData?.companyName
+                             }),
+                           })
+                           
+                           const result = await response.json()
+                           
+                           if (response.ok && result.success) {
+                             alert('✅ Link sent to your email!')
+                           } else {
+                             const errorMsg = result.error || 'Email sending failed'
+                             if (errorMsg.includes('RESEND_API_KEY')) {
+                               alert('⚠️ Email service not configured yet. Please copy the link manually or contact support.')
+                             } else {
+                               alert(`❌ ${errorMsg}`)
+                             }
+                           }
+                         } catch (error) {
+                           alert('❌ Email sending failed. Please copy the link manually.')
+                         }
+                       }}
+                       className="flex-1 border-slate-200 text-slate-700 hover:bg-slate-50"
+                     >
+                       ✉️ Email Me This Link
+                     </Button>
               </div>
             </div>
 

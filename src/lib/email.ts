@@ -10,12 +10,16 @@ async function safeEmailSend(emailFunction: () => Promise<any>) { // eslint-disa
   try {
     if (!hasResendKey) {
       console.warn('[email] RESEND_API_KEY not set; skipping email send. This is expected in development.')
-      return { id: 'dev-skip', success: true }
+      return { 
+        id: 'dev-skip', 
+        success: false, 
+        error: 'RESEND_API_KEY not configured. Please set up Resend API key to enable email sending.' 
+      }
     }
     return await emailFunction()
   } catch (error) {
     console.error('[email] Error sending email:', error)
-    // Return success to prevent blocking the main flow
+    // Return error details to help with debugging
     return { id: 'error-skip', success: false, error: error instanceof Error ? error.message : 'Unknown error' }
   }
 }

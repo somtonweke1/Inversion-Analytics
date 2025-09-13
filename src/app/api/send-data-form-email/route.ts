@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { sendDataFormEmail } from '@/lib/email'
+import { getContactRequest } from '@/lib/storage'
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,12 +14,28 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // For demo purposes, use a demo email
-    // In production, you'd get this from the contact form or session
+    // Extract contactRequestId from dataFormUrl
+    const contactRequestId = dataFormUrl.split('/').pop()
+    if (!contactRequestId) {
+      return NextResponse.json(
+        { error: 'Invalid dataFormUrl' },
+        { status: 400 }
+      )
+    }
+
+    const contactRequest = getContactRequest(contactRequestId)
+    
+    if (!contactRequest) {
+      return NextResponse.json(
+        { error: 'Contact request not found' },
+        { status: 404 }
+      )
+    }
+
     const result = await sendDataFormEmail({
-      contactName: 'Demo User',
-      contactEmail: 'demo@example.com',
-      companyName,
+      contactName: contactRequest.contactName,
+      contactEmail: contactRequest.contactEmail,
+      companyName: contactRequest.companyName,
       dataFormUrl,
     })
 
