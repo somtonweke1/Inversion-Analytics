@@ -99,7 +99,13 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
     setAnalysisStep('')
 
     try {
-      // Simulate analysis steps
+      const formData = form.getValues()
+      
+      // Get the contact ID from the URL
+      const urlParams = await params
+      const contactRequestId = urlParams.id
+
+      // Show analysis steps
       const steps = [
         'Validating system parameters...',
         'Running Freundlich Isotherm analysis...',
@@ -114,20 +120,37 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
         await new Promise(resolve => setTimeout(resolve, 1000))
       }
 
-      // Generate mock analysis results
-      const mockResults = {
-        bedLifeDays: Math.floor(Math.random() * 365) + 180,
-        costSavings: Math.floor(Math.random() * 500000) + 200000,
-        roi: Math.floor(Math.random() * 300) + 150,
-        paybackPeriod: Math.floor(Math.random() * 12) + 6
+      // Call the real API endpoint
+      setAnalysisStep('Sending analysis request...')
+      const response = await fetch('/api/data-submission', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contactRequestId,
+          ...formData
+        }),
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Analysis failed')
       }
 
+      setAnalysisStep('Generating report...')
+      await new Promise(resolve => setTimeout(resolve, 2000))
+
+      setAnalysisStep('Sending email notification...')
+      await new Promise(resolve => setTimeout(resolve, 1000))
+
       setIsSubmitted(true)
-      setSubmitSuccess(`Analysis complete! Your GAC system analysis shows ${mockResults.bedLifeDays} days bed life with $${mockResults.costSavings.toLocaleString()} in potential savings.`)
+      setSubmitSuccess(`Analysis complete! Your GAC system analysis report has been generated and sent to your email. Report ID: ${result.reportId}`)
       
     } catch (error) {
       console.error('Error submitting data:', error)
-      setSubmitError('There was an error processing your analysis. Please try again.')
+      setSubmitError(error instanceof Error ? error.message : 'There was an error processing your analysis. Please try again.')
     } finally {
       setIsSubmitting(false)
       setAnalysisStep('')
@@ -180,7 +203,7 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
                 Analysis Complete!
               </h1>
               <p className="text-xl text-slate-600 mb-8 leading-relaxed">
-                Thank you for submitting your data. We&apos;ll process your analysis and send you the results via email.
+                Thank you for submitting your data! Your GAC system analysis has been completed and sent to your email address. Check your inbox for the detailed report with optimization recommendations.
               </p>
             </div>
 

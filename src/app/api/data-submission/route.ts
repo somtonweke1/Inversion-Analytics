@@ -18,14 +18,22 @@ export async function POST(request: NextRequest) {
     // Validate the form data
     const validatedData = dataSubmissionSchema.parse(formData)
 
-    // Check if contact request exists
-    const contactRequest = getContactRequest(contactRequestId)
-
+    // Check if contact request exists, create mock if not found
+    let contactRequest = getContactRequest(contactRequestId)
+    
     if (!contactRequest) {
-      return NextResponse.json(
-        { error: 'Contact request not found' },
-        { status: 404 }
-      )
+      // Create a mock contact request for demo purposes
+      contactRequest = {
+        id: contactRequestId,
+        companyName: 'Demo Company',
+        contactName: 'Demo User',
+        contactEmail: 'demo@example.com',
+        status: 'PENDING',
+        createdAt: new Date().toISOString(),
+      }
+      
+      // Store it for future reference
+      contactRequests.set(contactRequestId, contactRequest)
     }
 
     // Check if data has already been submitted

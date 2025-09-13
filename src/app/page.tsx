@@ -33,14 +33,31 @@ export default function HomePage() {
     
     const formData = new FormData(e.currentTarget)
     const companyName = formData.get('companyName') as string
+    const contactName = formData.get('contactName') as string
+    const contactEmail = formData.get('contactEmail') as string
 
     try {
-      // Generate a mock response that works in both local and production
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      const mockId = `contact_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-      const base = typeof window !== 'undefined' ? window.location.origin : ''
-      const dataFormUrl = `${base}/data-form/${mockId}`
+      // Call the real API to create a contact request
+      const response = await fetch('/api/contact-request', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          companyName,
+          contactName,
+          contactEmail,
+        }),
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to create contact request')
+      }
+
+      // Use the real data form URL from the API response
+      const dataFormUrl = result.dataFormUrl || `https://inversion-ai.vercel.app/data-form/${result.id}`
       
       setIsDialogOpen(false)
       setSuccessData({ companyName, dataFormUrl })
@@ -48,7 +65,7 @@ export default function HomePage() {
       
     } catch (error) {
       console.error('Error submitting contact request:', error)
-      alert('There was an error submitting your request. Please try again.')
+      alert(error instanceof Error ? error.message : 'There was an error submitting your request. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
@@ -322,7 +339,28 @@ export default function HomePage() {
                 </Button>
                 <Button 
                   variant="outline" 
-                  onClick={() => setShowSuccess(false)}
+                  onClick={async () => {
+                    try {
+                      const response = await fetch('/api/send-data-form-email', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          dataFormUrl: successData?.dataFormUrl,
+                          companyName: successData?.companyName
+                        }),
+                      })
+                      
+                      if (response.ok) {
+                        alert('Link sent to your email!')
+                      } else {
+                        alert('Email sending is not configured yet. Please copy the link manually.')
+                      }
+                    } catch {
+                      alert('Email sending is not configured yet. Please copy the link manually.')
+                    }
+                  }}
                   className="flex-1 border-slate-200 text-slate-700 hover:bg-slate-50"
                 >
                   ✉️ Email Me This Link

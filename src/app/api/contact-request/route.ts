@@ -17,11 +17,12 @@ export async function POST(request: NextRequest) {
     const contactRequest = createContactRequest(body)
 
     // Return success with the stored data
+    const baseUrl = process.env.NEXTAUTH_URL || 'https://inversion-ai.vercel.app'
     return NextResponse.json({
       success: true,
       message: 'Contact request created successfully',
       id: contactRequest.id,
-      dataFormUrl: `https://axiom-mvp.vercel.app/data-form/${contactRequest.id}`
+      dataFormUrl: `${baseUrl}/data-form/${contactRequest.id}`
     })
 
   } catch (error) {
