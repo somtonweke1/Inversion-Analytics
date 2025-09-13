@@ -291,14 +291,15 @@ export default function HomePage() {
       {/* Success Modal */}
       <Dialog open={showSuccess} onOpenChange={setShowSuccess}>
         <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-slate-900 mb-4">
+              🎉 Success! Your Analysis Request is Ready
+            </DialogTitle>
+          </DialogHeader>
           <div className="text-center py-8">
             <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-6">
               <CheckCircle className="h-8 w-8 text-green-600" />
             </div>
-            
-            <h3 className="text-2xl font-bold text-slate-900 mb-4">
-              🎉 Success! Your Analysis Request is Ready
-            </h3>
             
             <p className="text-lg text-slate-600 mb-6">
               Thank you, <span className="font-semibold text-slate-900">{successData?.companyName}</span>! 
