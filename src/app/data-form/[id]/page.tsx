@@ -145,8 +145,11 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
       setAnalysisStep('Sending email notification...')
       await new Promise(resolve => setTimeout(resolve, 1000))
 
-      setIsSubmitted(true)
-      setSubmitSuccess(`Analysis complete! Your GAC system analysis report has been generated and sent to your email. Report ID: ${result.reportId}`)
+      setSubmitSuccess('Analysis Complete! Redirecting to your results and implementation options...')
+      // Redirect to the analysis success page with implementation offers
+      setTimeout(() => {
+        window.location.href = `/analysis-success/${contactRequestId}`
+      }, 2000)
       
     } catch (error) {
       console.error('Error submitting data:', error)
