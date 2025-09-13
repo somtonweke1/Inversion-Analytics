@@ -13,8 +13,14 @@ import {
   Target, 
   ArrowRight, 
   Loader2, 
-  Zap,
-  CheckCircle
+  CheckCircle,
+  Activity,
+  Award,
+  Briefcase,
+  Users,
+  Clock,
+  DollarSign,
+  Mail
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -37,7 +43,6 @@ export default function HomePage() {
     const contactEmail = formData.get('contactEmail') as string
 
     try {
-      // Call the real API to create a contact request
       const response = await fetch('/api/contact-request', {
         method: 'POST',
         headers: {
@@ -50,73 +55,97 @@ export default function HomePage() {
         }),
       })
 
-      const result = await response.json()
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to create contact request')
+      if (response.ok) {
+        const result = await response.json()
+        setSuccessData({
+          companyName,
+          dataFormUrl: result.dataFormUrl
+        })
+        setShowSuccess(true)
+        setIsDialogOpen(false)
+      } else {
+        console.error('Failed to create contact request')
       }
-
-      // Use the real data form URL from the API response
-      const dataFormUrl = result.dataFormUrl || `https://inversion-ai.vercel.app/data-form/${result.id}`
-      
-      setIsDialogOpen(false)
-      setSuccessData({ companyName, dataFormUrl })
-      setShowSuccess(true)
-      
     } catch (error) {
-      console.error('Error submitting contact request:', error)
-      alert(error instanceof Error ? error.message : 'There was an error submitting your request. Please try again.')
+      console.error('Error creating contact request:', error)
     } finally {
       setIsSubmitting(false)
     }
   }
 
+  const handleEmailMeThisLink = async () => {
+    if (!successData) return
+
+    try {
+      const response = await fetch('/api/send-data-form-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          dataFormUrl: successData.dataFormUrl,
+          companyName: successData.companyName,
+        }),
+      })
+
+      if (response.ok) {
+        alert('Email sent successfully! Check your inbox.')
+      } else {
+        alert('Email could not be sent. Please copy the link manually.')
+      }
+    } catch (error) {
+      console.error('Error sending email:', error)
+      alert('Email could not be sent. Please copy the link manually.')
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
-      <nav className="border-b border-slate-100 bg-white/95 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-8 py-6">
+      <nav className="border-b border-gray-200 bg-white/95 backdrop-blur-sm sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center">
-                <BarChart3 className="h-5 w-5 text-white" />
+              <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
+                <BarChart3 className="h-4 w-4 text-white" />
               </div>
-              <span className="text-2xl font-semibold text-slate-900 tracking-tight">Inversion Analytics</span>
+              <span className="text-xl font-semibold text-gray-900">Inversion Analytics</span>
             </div>
-            <div className="flex items-center space-x-8">
-              <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900 font-medium" asChild>
-                <Link href="/enterprise">Enterprise</Link>
-              </Button>
-              <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900 font-medium" asChild>
-                <Link href="/investors">Investors</Link>
-              </Button>
+            <div className="flex items-center space-x-6">
+              <Link href="/enterprise" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+                Enterprise
+              </Link>
+              <Link href="/investors" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+                Investors
+              </Link>
             </div>
           </div>
         </div>
       </nav>
 
-      <div className="pt-20 pb-24 px-8">
-        <div className="max-w-6xl mx-auto">
       {/* Hero Section */}
-          <header className="mb-32 text-center">
-            <div className="mb-8">
-              <div className="inline-flex items-center px-4 py-2 rounded-full bg-slate-50 border border-slate-200 text-slate-700 text-sm font-medium mb-8">
-                <Zap className="h-4 w-4 mr-2 text-slate-600" />
-                Advanced GAC System Optimization
-              </div>
+      <section className="py-24">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-gray-100 border border-gray-200 text-gray-700 text-sm font-medium mb-8">
+              <Activity className="h-4 w-4 mr-2 text-gray-600" />
+              Advanced GAC System Optimization
             </div>
-            <h1 className="text-6xl font-bold text-slate-900 mb-8 tracking-tight leading-tight">
+            
+            <h1 className="text-5xl font-semibold text-gray-900 mb-6 tracking-tight leading-tight">
               Optimize Your GAC System
-              <span className="block text-slate-600 font-normal">Performance</span>
+              <span className="block text-gray-600 font-normal mt-2">Performance</span>
             </h1>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed mb-12">
+            
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-12">
               Advanced analytics and predictive modeling for granular activated carbon systems. 
               Reduce costs, extend bed life, and ensure compliance with our proprietary Freundlich Isotherm modeling.
             </p>
+            
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button size="lg" className="bg-slate-900 hover:bg-slate-800 text-white px-10 py-4 text-lg font-medium rounded-xl">
+                  <Button className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-4 text-lg font-medium">
                     Get Started
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
@@ -124,28 +153,48 @@ export default function HomePage() {
                 <DialogContent className="sm:max-w-md">
                   <DialogHeader>
                     <DialogTitle className="text-xl font-semibold">Request Analysis</DialogTitle>
-                    <DialogDescription className="text-slate-600">
+                    <DialogDescription className="text-gray-600">
                       Enter your details to receive a secure link for data submission.
                     </DialogDescription>
                   </DialogHeader>
                   <form onSubmit={handleContactSubmit} className="space-y-6">
                     <div className="space-y-2">
-                      <Label htmlFor="companyName" className="text-sm font-medium text-slate-700">Company Name</Label>
-                      <Input id="companyName" name="companyName" required className="border-slate-200 focus:border-slate-400 focus:ring-slate-400" />
+                      <Label htmlFor="companyName" className="text-sm font-medium text-gray-700">Company Name</Label>
+                      <Input 
+                        id="companyName" 
+                        name="companyName" 
+                        required 
+                        className="border-gray-200 focus:border-gray-400 focus:ring-gray-400" 
+                      />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="contactName" className="text-sm font-medium text-slate-700">Contact Name</Label>
-                      <Input id="contactName" name="contactName" required className="border-slate-200 focus:border-slate-400 focus:ring-slate-400" />
+                      <Label htmlFor="contactName" className="text-sm font-medium text-gray-700">Contact Name</Label>
+                      <Input 
+                        id="contactName" 
+                        name="contactName" 
+                        required 
+                        className="border-gray-200 focus:border-gray-400 focus:ring-gray-400" 
+                      />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="contactEmail" className="text-sm font-medium text-slate-700">Email</Label>
-                      <Input id="contactEmail" name="contactEmail" type="email" required className="border-slate-200 focus:border-slate-400 focus:ring-slate-400" />
+                      <Label htmlFor="contactEmail" className="text-sm font-medium text-gray-700">Email Address</Label>
+                      <Input 
+                        id="contactEmail" 
+                        name="contactEmail" 
+                        type="email" 
+                        required 
+                        className="border-gray-200 focus:border-gray-400 focus:ring-gray-400" 
+                      />
                     </div>
-                    <Button type="submit" className="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 font-medium" disabled={isSubmitting}>
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-gray-900 hover:bg-gray-800 text-white"
+                      disabled={isSubmitting}
+                    >
                       {isSubmitting ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Submitting...
+                          Processing...
                         </>
                       ) : (
                         'Submit Request'
@@ -154,235 +203,220 @@ export default function HomePage() {
                   </form>
                 </DialogContent>
               </Dialog>
-              <Button variant="outline" size="lg" className="px-10 py-4 text-lg font-medium rounded-xl border-slate-200 text-slate-700 hover:bg-slate-50">
+              
+              <Button variant="outline" className="px-8 py-4 text-lg font-medium border-gray-200 text-gray-700 hover:bg-gray-50">
                 Learn More
               </Button>
             </div>
-          </header>
+          </div>
+        </div>
+      </section>
 
       {/* Features Section */}
-          <section className="mb-32">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-slate-900 mb-4 tracking-tight">Key Features</h2>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-                Advanced capabilities designed for enterprise-grade GAC system optimization
+      <section className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-semibold text-gray-900 mb-4">
+              Key Features
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Advanced capabilities designed for enterprise-grade GAC system optimization
             </p>
           </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <Card className="border-0 shadow-none hover:shadow-xl transition-all duration-500 bg-white rounded-2xl p-8">
-                <CardHeader className="pb-6">
-                  <div className="flex items-center space-x-4 mb-6">
-                    <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center">
-                      <Shield className="h-7 w-7 text-slate-700" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-xl text-slate-900 font-semibold">Guaranteed Savings</CardTitle>
-                      <CardDescription className="text-slate-600 font-medium">$200k+ or it&apos;s free</CardDescription>
-                    </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <Card className="bg-white border-gray-200 hover:shadow-lg transition-shadow">
+              <CardContent className="p-8">
+                <div className="flex items-center space-x-4 mb-6">
+                  <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <Shield className="h-6 w-6 text-gray-700" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">Guaranteed Savings</h3>
+                    <p className="text-sm text-gray-600">$200k+ or it's free</p>
+                  </div>
                 </div>
-              </CardHeader>
-              <CardContent>
-                  <p className="text-slate-700 leading-relaxed text-base">
-                    Our proprietary analysis guarantees significant cost savings through optimized GAC system performance and bed life extension.
-                  </p>
+                <p className="text-gray-700 leading-relaxed">
+                  Our proprietary analysis guarantees significant cost savings through optimized GAC system performance and bed life extension.
+                </p>
               </CardContent>
             </Card>
 
-              <Card className="border-0 shadow-none hover:shadow-xl transition-all duration-500 bg-white rounded-2xl p-8">
-                <CardHeader className="pb-6">
-                  <div className="flex items-center space-x-4 mb-6">
-                    <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center">
-                      <TrendingUp className="h-7 w-7 text-slate-700" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-xl text-slate-900 font-semibold">Predictive Analytics</CardTitle>
-                      <CardDescription className="text-slate-600 font-medium">Monte Carlo simulation</CardDescription>
-                    </div>
+            <Card className="bg-white border-gray-200 hover:shadow-lg transition-shadow">
+              <CardContent className="p-8">
+                <div className="flex items-center space-x-4 mb-6">
+                  <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <TrendingUp className="h-6 w-6 text-gray-700" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">Predictive Analytics</h3>
+                    <p className="text-sm text-gray-600">Monte Carlo simulation</p>
+                  </div>
                 </div>
-              </CardHeader>
-              <CardContent>
-                  <p className="text-slate-700 leading-relaxed text-base">
-                    Advanced Monte Carlo simulation predicts bed exhaustion with 95% accuracy, enabling proactive maintenance scheduling.
-                  </p>
+                <p className="text-gray-700 leading-relaxed">
+                  Advanced Monte Carlo simulation predicts bed exhaustion with 95% accuracy, enabling proactive maintenance scheduling.
+                </p>
               </CardContent>
             </Card>
 
-              <Card className="border-0 shadow-none hover:shadow-xl transition-all duration-500 bg-white rounded-2xl p-8">
-                <CardHeader className="pb-6">
-                  <div className="flex items-center space-x-4 mb-6">
-                    <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center">
-                      <Target className="h-7 w-7 text-slate-700" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-xl text-slate-900 font-semibold">Compliance Assurance</CardTitle>
-                      <CardDescription className="text-slate-600 font-medium">EPA standards</CardDescription>
-                    </div>
+            <Card className="bg-white border-gray-200 hover:shadow-lg transition-shadow">
+              <CardContent className="p-8">
+                <div className="flex items-center space-x-4 mb-6">
+                  <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <Target className="h-6 w-6 text-gray-700" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">Compliance Assurance</h3>
+                    <p className="text-sm text-gray-600">EPA standards</p>
+                  </div>
                 </div>
-              </CardHeader>
-              <CardContent>
-                  <p className="text-slate-700 leading-relaxed text-base">
-                    Ensure full compliance with EPA regulations and industry standards through continuous monitoring and optimization.
-                  </p>
+                <p className="text-gray-700 leading-relaxed">
+                  Ensure full compliance with EPA regulations and industry standards through continuous monitoring and optimization.
+                </p>
               </CardContent>
             </Card>
+          </div>
         </div>
       </section>
 
       {/* CTA Section */}
-          <section className="mb-24">
-            <div className="bg-slate-900 rounded-3xl p-16 text-center">
-              <div className="max-w-3xl mx-auto">
-                <h2 className="text-4xl font-bold text-white mb-6 tracking-tight">
-                  Ready to Optimize Your GAC System?
-            </h2>
-                <p className="text-xl text-slate-300 mb-10 leading-relaxed">
-                  Join leading data centers and manufacturing facilities in achieving unprecedented GAC system efficiency.
-            </p>
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                    <Button size="lg" className="bg-white text-slate-900 hover:bg-slate-100 px-10 py-4 text-lg font-medium rounded-xl">
-                      Start Your Analysis
-                      <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </DialogTrigger>
-                  <DialogContent className="sm:max-w-md">
-                    <DialogHeader>
-                      <DialogTitle className="text-xl font-semibold">Request Analysis</DialogTitle>
-                      <DialogDescription className="text-slate-600">
-                        Enter your details to receive a secure link for data submission.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <form onSubmit={handleContactSubmit} className="space-y-6">
-                      <div className="space-y-2">
-                        <Label htmlFor="companyName" className="text-sm font-medium text-slate-700">Company Name</Label>
-                        <Input id="companyName" name="companyName" required className="border-slate-200 focus:border-slate-400 focus:ring-slate-400" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="contactName" className="text-sm font-medium text-slate-700">Contact Name</Label>
-                        <Input id="contactName" name="contactName" required className="border-slate-200 focus:border-slate-400 focus:ring-slate-400" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="contactEmail" className="text-sm font-medium text-slate-700">Email</Label>
-                        <Input id="contactEmail" name="contactEmail" type="email" required className="border-slate-200 focus:border-slate-400 focus:ring-slate-400" />
-                      </div>
-                      <Button type="submit" className="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 font-medium" disabled={isSubmitting}>
-                        {isSubmitting ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Submitting...
-                          </>
-                        ) : (
-                          'Submit Request'
-                        )}
-                      </Button>
-                    </form>
-                  </DialogContent>
-            </Dialog>
+      <section className="py-24">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="bg-gray-900 rounded-2xl p-16 text-center">
+            <div className="max-w-3xl mx-auto">
+              <h2 className="text-3xl font-semibold text-white mb-6">
+                Ready to Optimize Your GAC System?
+              </h2>
+              <p className="text-xl text-gray-300 mb-10 leading-relaxed">
+                Join leading data centers and manufacturing facilities in achieving unprecedented GAC system efficiency.
+              </p>
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button className="bg-white text-gray-900 hover:bg-gray-100 px-8 py-4 text-lg font-medium">
+                    Start Your Analysis
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle className="text-xl font-semibold">Request Analysis</DialogTitle>
+                    <DialogDescription className="text-gray-600">
+                      Enter your details to receive a secure link for data submission.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <form onSubmit={handleContactSubmit} className="space-y-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="companyName2" className="text-sm font-medium text-gray-700">Company Name</Label>
+                      <Input 
+                        id="companyName2" 
+                        name="companyName" 
+                        required 
+                        className="border-gray-200 focus:border-gray-400 focus:ring-gray-400" 
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="contactName2" className="text-sm font-medium text-gray-700">Contact Name</Label>
+                      <Input 
+                        id="contactName2" 
+                        name="contactName" 
+                        required 
+                        className="border-gray-200 focus:border-gray-400 focus:ring-gray-400" 
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="contactEmail2" className="text-sm font-medium text-gray-700">Email Address</Label>
+                      <Input 
+                        id="contactEmail2" 
+                        name="contactEmail" 
+                        type="email" 
+                        required 
+                        className="border-gray-200 focus:border-gray-400 focus:ring-gray-400" 
+                      />
+                    </div>
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-gray-900 hover:bg-gray-800 text-white"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Processing...
+                        </>
+                      ) : (
+                        'Submit Request'
+                      )}
+                    </Button>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            </div>
           </div>
         </div>
       </section>
 
-          <footer className="text-center text-slate-500 py-8">
-            <p>&copy; 2024 Inversion Analytics. All rights reserved.</p>
-          </footer>
+      {/* Footer */}
+      <footer className="border-t border-gray-200 bg-white py-8">
+        <div className="max-w-7xl mx-auto px-6">
+          <p className="text-center text-gray-500">
+            © 2024 Inversion Analytics. All rights reserved.
+          </p>
         </div>
-      </div>
+      </footer>
 
       {/* Success Modal */}
       <Dialog open={showSuccess} onOpenChange={setShowSuccess}>
         <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-slate-900 mb-4">
-              🎉 Success! Your Analysis Request is Ready
+            <DialogTitle className="text-2xl font-semibold text-gray-900 mb-4">
+              Analysis Request Ready
             </DialogTitle>
           </DialogHeader>
           <div className="text-center py-8">
-            <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-6">
-              <CheckCircle className="h-8 w-8 text-green-600" />
+            <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-gray-100 mb-6">
+              <CheckCircle className="h-8 w-8 text-gray-900" />
             </div>
             
-            <p className="text-lg text-slate-600 mb-6">
-              Thank you, <span className="font-semibold text-slate-900">{successData?.companyName}</span>! 
+            <p className="text-lg text-gray-600 mb-6">
+              Thank you, <span className="font-semibold text-gray-900">{successData?.companyName}</span>! 
               Your secure data submission link has been generated.
             </p>
-
-            <div className="bg-slate-50 rounded-xl p-6 mb-6">
-              <h4 className="text-sm font-medium text-slate-700 mb-3">Your Secure Data Form Link:</h4>
-              <div className="bg-white rounded-lg p-4 border border-slate-200">
-                <code className="text-sm text-slate-800 break-all">
+            
+            <div className="bg-gray-50 rounded-lg p-6 mb-6">
+              <p className="text-sm text-gray-600 mb-3">Your secure data submission link:</p>
+              <div className="bg-white border border-gray-200 rounded-lg p-3 mb-4">
+                <code className="text-sm text-gray-800 break-all">
                   {successData?.dataFormUrl}
                 </code>
               </div>
-              <p className="text-xs text-slate-500 mt-2">
-                This link is unique to your request and will expire in 7 days
-              </p>
-            </div>
-
-            <div className="space-y-4">
               <Button 
-                onClick={() => window.open(successData?.dataFormUrl, '_blank')}
-                className="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 px-6 text-lg font-medium rounded-xl"
+                onClick={handleEmailMeThisLink}
+                className="bg-gray-900 hover:bg-gray-800 text-white"
               >
-                <BarChart3 className="mr-2 h-5 w-5" />
-                Start Your Analysis
+                <Mail className="mr-2 h-4 w-4" />
+                Email Me This Link
               </Button>
-              
-              <div className="flex space-x-3">
-                <Button 
-                  variant="outline" 
-                  onClick={() => {
-                    navigator.clipboard.writeText(successData?.dataFormUrl || '')
-                    alert('Link copied to clipboard!')
-                  }}
-                  className="flex-1 border-slate-200 text-slate-700 hover:bg-slate-50"
-                >
-                  📋 Copy Link
-                </Button>
-                     <Button 
-                       variant="outline" 
-                       onClick={async () => {
-                         try {
-                           const response = await fetch('/api/send-data-form-email', {
-                             method: 'POST',
-                             headers: {
-                               'Content-Type': 'application/json',
-                             },
-                             body: JSON.stringify({
-                               dataFormUrl: successData?.dataFormUrl,
-                               companyName: successData?.companyName
-                             }),
-                           })
-                           
-                           const result = await response.json()
-                           
-                           if (response.ok && result.success) {
-                             alert('✅ Link sent to your email!')
-                           } else {
-                             const errorMsg = result.error || 'Email sending failed'
-                             if (errorMsg.includes('RESEND_API_KEY')) {
-                               alert('⚠️ Email service not configured yet. Please copy the link manually or contact support.')
-                             } else {
-                               alert(`❌ ${errorMsg}`)
-                             }
-                           }
-                         } catch (error) {
-                           alert('❌ Email sending failed. Please copy the link manually.')
-                         }
-                       }}
-                       className="flex-1 border-slate-200 text-slate-700 hover:bg-slate-50"
-                     >
-                       ✉️ Email Me This Link
-                     </Button>
-              </div>
             </div>
-
-            <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-              <h5 className="text-sm font-medium text-blue-900 mb-2">What happens next?</h5>
-              <ul className="text-sm text-blue-800 space-y-1 text-left">
-                <li>• Complete the data form with your GAC system details</li>
-                <li>• Our AI will analyze your system using advanced algorithms</li>
-                <li>• Receive a comprehensive optimization report within 24 hours</li>
-                <li>• Get guaranteed savings of $200k+ or the analysis is free</li>
+            
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-blue-900 mb-3">What Happens Next:</h3>
+              <ul className="text-left text-blue-800 space-y-2">
+                <li className="flex items-start space-x-2">
+                  <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <span>Submit your GAC system data through the secure form</span>
+                </li>
+                <li className="flex items-start space-x-2">
+                  <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <span>Our AI analyzes your system performance and optimization opportunities</span>
+                </li>
+                <li className="flex items-start space-x-2">
+                  <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <span>Receive a comprehensive optimization report within 24 hours</span>
+                </li>
+                <li className="flex items-start space-x-2">
+                  <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <span>Get guaranteed savings of $200k+ or the analysis is free</span>
+                </li>
               </ul>
             </div>
           </div>

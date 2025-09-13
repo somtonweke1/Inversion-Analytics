@@ -16,20 +16,13 @@ import {
   BarChart3, 
   Factory, 
   Gauge, 
-  Zap,
   Shield,
   Target,
-  TrendingUp
+  TrendingUp,
+  Activity,
+  Clock
 } from 'lucide-react'
 import Link from 'next/link'
-
-// interface ContactRequest {
-//   id: string
-//   companyName: string
-//   contactName: string
-//   contactEmail: string
-//   status: string
-// }
 
 export default function DataFormPage({ params }: { params: Promise<{ id: string }> }) {
   const [isLoading, setIsLoading] = useState(true)
@@ -48,112 +41,104 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
       flowRate: 100,
       bedHeight: 2.5,
       vesselVolume: 9.42,
-      bedVolume: 7.85,
-      ebct: 15,
-      toc: 2.0,
-      sulfate: 50,
-      chloride: 25,
-      alkalinity: 100,
-      hardness: 150,
-      ph: 7.5,
-      temperature: 20,
-      pfoaConcentration: 15,
-      pfosConcentration: 8,
-      pfnaConcentration: 2,
-      pfhxaConcentration: 1,
-      pfhxsConcentration: 0.5,
-      pfdaConcentration: 0.3,
-      pfbsConcentration: 0.2,
-      pfhpaConcentration: 0.1,
-      pfundaConcentration: 0.05,
-      pfdoaConcentration: 0.02,
-      totalPfasConcentration: 27.17,
-      gacType: 'Calgon F400',
-      gacDensity: 450,
-      gacParticleSize: 0.8,
-      gacIodineNumber: 1100,
-      gacSurfaceArea: 1200,
-      gacCostPerKg: 3.50,
-      replacementCost: 50000,
-      laborCost: 20000,
-      disposalCost: 10000,
-      operatingDaysPerYear: 365,
-      operatingHoursPerDay: 24,
-      targetRemovalEfficiency: 95,
-      safetyFactor: 1.2
+      gacType: 'Coal Based',
+      gacDensity: 0.5,
+      particleSize: 1.5,
+      iodineNumber: 1000,
+      surfaceArea: 900,
+      poreVolume: 0.6,
+      ashContent: 8.0,
+      moistureContent: 5.0,
+      phValue: 7.0,
+      waterTemperature: 25.0,
+      totalDissolvedSolids: 500,
+      turbidity: 1.0,
+      chlorineResidual: 0.5,
+      organicCarbon: 2.0,
+      targetContaminants: ['Chlorine', 'Taste and Odor'],
+      contaminantConcentration: 1.0,
+      targetRemoval: 95.0,
+      emptyBedContactTime: 15.0,
+      hydraulicLoadingRate: 10.0,
+      bedVolumeUtilization: 80.0,
+      regenerationFrequency: 180,
+      regenerationMethod: 'Thermal',
+      regenerationTemperature: 850.0,
+      regenerationTime: 8.0,
+      sorbentCost: 5.0,
+      laborCost: 100.0,
+      disposalCost: 50.0,
+      energyCost: 2.0,
+      complianceRequirements: ['EPA', 'State Regulations'],
+      monitoringFrequency: 'Daily',
+      reportingRequirements: 'Monthly',
+      performanceMetrics: ['Removal Efficiency', 'Pressure Drop'],
+      optimizationGoals: ['Cost Reduction', 'Extended Bed Life'],
+      environmentalFactors: ['Temperature Variation', 'Flow Rate Changes'],
+      operationalConstraints: ['Limited Downtime', 'Budget Constraints'],
+      historicalData: 'Available',
+      previousOptimization: 'None',
+      maintenanceSchedule: 'Quarterly',
+      operatorExperience: 'Intermediate',
+      trainingNeeds: 'Basic',
+      technologyReadiness: 'High'
     }
   })
 
   useEffect(() => {
-    const resolveParams = async () => {
-      await params // Just resolve the params promise
+    // Simulate loading
+    setTimeout(() => {
       setIsLoading(false)
-    }
-    resolveParams()
-  }, [params])
+    }, 1000)
+  }, [])
 
-  const onSubmit = async () => {
+  const onSubmit = async (data: DataSubmissionFormData) => {
     setIsSubmitting(true)
     setSubmitError(null)
-    setSubmitSuccess(null)
-    setAnalysisStep('')
-
+    
     try {
-      const formData = form.getValues()
-      
-      // Get the contact ID from the URL
-      const urlParams = await params
-      const contactRequestId = urlParams.id
-
-      // Show analysis steps
+      // Simulate analysis steps
       const steps = [
-        'Validating system parameters...',
-        'Running Freundlich Isotherm analysis...',
-        'Performing Monte Carlo simulation...',
-        'Calculating bed life predictions...',
-        'Generating cost optimization report...',
-        'Preparing final analysis...'
+        'Initializing system analysis...',
+        'Processing GAC parameters...',
+        'Calculating adsorption isotherm...',
+        'Running Monte Carlo simulation...',
+        'Generating optimization recommendations...',
+        'Preparing comprehensive report...'
       ]
-
-      for (let i = 0; i < steps.length; i++) {
-        setAnalysisStep(steps[i])
-        await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      for (const step of steps) {
+        setAnalysisStep(step)
+        await new Promise(resolve => setTimeout(resolve, 800))
       }
-
-      // Call the real API endpoint
-      setAnalysisStep('Sending analysis request...')
+      
+      // Submit to API
       const response = await fetch('/api/data-submission', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          contactRequestId,
-          ...formData
+          contactRequestId: (await params).id,
+          formData: data
         }),
       })
 
-      const result = await response.json()
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Analysis failed')
+      if (response.ok) {
+        const result = await response.json()
+        setSubmitSuccess('Analysis complete! Your comprehensive optimization report has been sent to your email.')
+        setIsSubmitted(true)
+        
+        // Redirect to analysis success page after a short delay
+        setTimeout(() => {
+          window.location.href = `/analysis-success/${(await params).id}`
+        }, 2000)
+      } else {
+        setSubmitError('Failed to submit data. Please try again.')
       }
-
-      setAnalysisStep('Generating report...')
-      await new Promise(resolve => setTimeout(resolve, 2000))
-
-      setAnalysisStep('Sending email notification...')
-      await new Promise(resolve => setTimeout(resolve, 1000))
-
-      setSubmitSuccess('Analysis Complete! Redirecting to your results and implementation options...')
-      // Redirect to the analysis success page with implementation offers
-      setTimeout(() => {
-        window.location.href = `/analysis-success/${contactRequestId}`
-      }, 2000)
-      
     } catch (error) {
       console.error('Error submitting data:', error)
-      setSubmitError(error instanceof Error ? error.message : 'There was an error processing your analysis. Please try again.')
+      setSubmitError('An error occurred while submitting your data. Please try again.')
     } finally {
       setIsSubmitting(false)
       setAnalysisStep('')
@@ -162,477 +147,523 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin text-slate-600 mx-auto mb-4" />
-          <p className="text-slate-600">Loading form...</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (isSubmitted) {
-    return (
-      <div className="min-h-screen bg-white">
-        {/* Navigation */}
-        <nav className="border-b border-slate-100 bg-white/95 backdrop-blur-sm sticky top-0 z-50">
-          <div className="max-w-6xl mx-auto px-8 py-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900 font-medium" asChild>
-                <Link href="/">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Home
-                </Link>
-                </Button>
-              </div>
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center">
-                  <BarChart3 className="h-5 w-5 text-white" />
-                </div>
-                <span className="text-2xl font-semibold text-slate-900 tracking-tight">Inversion Analytics</span>
-              </div>
-            </div>
-          </div>
-        </nav>
-
-        <div className="pt-20 pb-24 px-8">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="mb-8">
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle className="h-10 w-10 text-green-600" />
-              </div>
-              <h1 className="text-4xl font-bold text-slate-900 mb-4 tracking-tight">
-                Analysis Complete!
-              </h1>
-              <p className="text-xl text-slate-600 mb-8 leading-relaxed">
-                Thank you for submitting your data! Your GAC system analysis has been completed and sent to your email address. Check your inbox for the detailed report with optimization recommendations.
-              </p>
-            </div>
-
-            <Card className="p-8 rounded-2xl border-0 shadow-xl bg-slate-50">
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <Target className="h-8 w-8 text-blue-600" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-slate-900 mb-2">Bed Life Prediction</h3>
-                    <p className="text-slate-600">Advanced modeling predicts optimal replacement timing</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <TrendingUp className="h-8 w-8 text-green-600" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-slate-900 mb-2">Cost Optimization</h3>
-                    <p className="text-slate-600">Detailed analysis of potential savings and ROI</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <div className="mt-12">
-              <Button size="lg" className="bg-slate-900 hover:bg-slate-800 text-white px-10 py-4 text-lg font-medium rounded-xl" asChild>
-                <Link href="/">Return to Home</Link>
-              </Button>
-            </div>
-          </div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading data form...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
-      <nav className="border-b border-slate-100 bg-white/95 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-8 py-6">
+      <nav className="border-b border-gray-200 bg-white/95 backdrop-blur-sm sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900 font-medium" asChild>
-                <Link href="/">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Home
-                </Link>
-              </Button>
-            </div>
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center">
-                <BarChart3 className="h-5 w-5 text-white" />
+              <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
+                <BarChart3 className="h-4 w-4 text-white" />
               </div>
-              <span className="text-2xl font-semibold text-slate-900 tracking-tight">Inversion Analytics</span>
+              <span className="text-xl font-semibold text-gray-900">Inversion Analytics</span>
             </div>
+            <Link href="/" className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors">
+              <ArrowLeft className="h-4 w-4" />
+              <span className="text-sm">Return Home</span>
+            </Link>
           </div>
         </div>
       </nav>
 
-      <div className="pt-20 pb-24 px-8">
-        <div className="max-w-4xl mx-auto">
+      {/* Main Content */}
+      <div className="py-8">
+        <div className="max-w-4xl mx-auto px-6">
           {/* Header */}
-          <header className="mb-12 text-center">
-            <div className="mb-8">
-              <div className="inline-flex items-center px-4 py-2 rounded-full bg-slate-50 border border-slate-200 text-slate-700 text-sm font-medium mb-8">
-                <Factory className="h-4 w-4 mr-2 text-slate-600" />
-                GAC System Analysis
-              </div>
-            </div>
-            <h1 className="text-4xl font-bold text-slate-900 mb-6 tracking-tight">
-              System Data Collection
+          <div className="text-center mb-12">
+            <h1 className="text-3xl font-semibold text-gray-900 mb-4">
+              GAC System Data Submission
             </h1>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-              Please provide detailed information about your GAC system for comprehensive analysis and optimization recommendations.
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Provide your GAC system specifications to receive a comprehensive optimization analysis and guaranteed cost savings.
             </p>
-          </header>
+          </div>
+
+          {/* Success Message */}
+          {submitSuccess && (
+            <Card className="bg-green-50 border-green-200 mb-8">
+              <CardContent className="p-6">
+                <div className="flex items-center space-x-3">
+                  <CheckCircle className="h-6 w-6 text-green-600" />
+                  <div>
+                    <h3 className="text-lg font-semibold text-green-900">Analysis Complete!</h3>
+                    <p className="text-green-700">{submitSuccess}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Error Message */}
+          {submitError && (
+            <Card className="bg-red-50 border-red-200 mb-8">
+              <CardContent className="p-6">
+                <div className="flex items-center space-x-3">
+                  <div className="h-6 w-6 rounded-full bg-red-600 flex items-center justify-center">
+                    <span className="text-white text-sm font-bold">!</span>
+                  </div>
+                  <p className="text-red-700">{submitError}</p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Analysis Progress */}
+          {isSubmitting && analysisStep && (
+            <Card className="bg-blue-50 border-blue-200 mb-8">
+              <CardContent className="p-6">
+                <div className="flex items-center space-x-3">
+                  <Loader2 className="h-6 w-6 text-blue-600 animate-spin" />
+                  <div>
+                    <h3 className="text-lg font-semibold text-blue-900">Processing Analysis</h3>
+                    <p className="text-blue-700">{analysisStep}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Form */}
-          <Card className="p-8 rounded-2xl border-0 shadow-xl bg-white">
-            <CardHeader className="pb-6">
-              <CardTitle className="text-2xl font-semibold text-slate-900">System Parameters</CardTitle>
-              <CardDescription className="text-slate-600">
-                Enter your GAC system specifications for accurate analysis
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                  {/* System Configuration */}
-                  <div className="space-y-6">
-                    <h3 className="text-lg font-semibold text-slate-900 flex items-center">
-                      <Gauge className="h-5 w-5 mr-2 text-slate-600" />
-                      System Configuration
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <FormField
-                        control={form.control}
-                        name="systemType"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-slate-700 font-medium">System Type</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger className="border-slate-200 focus:border-slate-400 focus:ring-slate-400">
-                                  <SelectValue placeholder="Select system type" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="Fixed Bed">Fixed Bed</SelectItem>
-                                <SelectItem value="Moving Bed">Moving Bed</SelectItem>
-                                <SelectItem value="Fluidized Bed">Fluidized Bed</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="flowRate"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-slate-700 font-medium">Flow Rate (m³/h)</FormLabel>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              {/* System Configuration */}
+              <Card className="bg-white border-gray-200">
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Factory className="h-5 w-5 text-gray-700" />
+                    <span>System Configuration</span>
+                  </CardTitle>
+                  <CardDescription>
+                    Basic information about your GAC system setup
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="systemType"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>System Type</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
-                              <Input 
-                                type="number" 
-                                step="0.1" 
-                                {...field} 
-                                className="border-slate-200 focus:border-slate-400 focus:ring-slate-400"
-                              />
+                              <SelectTrigger className="border-gray-200">
+                                <SelectValue placeholder="Select system type" />
+                              </SelectTrigger>
                             </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Vessel Dimensions */}
-                  <div className="space-y-6">
-                    <h3 className="text-lg font-semibold text-slate-900 flex items-center">
-                      <Factory className="h-5 w-5 mr-2 text-slate-600" />
-                      Vessel Dimensions
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                      <FormField
-                        control={form.control}
-                        name="vesselDiameter"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-slate-700 font-medium">Diameter (m)</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="number" 
-                                step="0.1" 
-                                {...field} 
-                                className="border-slate-200 focus:border-slate-400 focus:ring-slate-400"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="vesselHeight"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-slate-700 font-medium">Height (m)</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="number" 
-                                step="0.1" 
-                                {...field} 
-                                className="border-slate-200 focus:border-slate-400 focus:ring-slate-400"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="bedHeight"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-slate-700 font-medium">Bed Height (m)</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="number" 
-                                step="0.1" 
-                                {...field} 
-                                className="border-slate-200 focus:border-slate-400 focus:ring-slate-400"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Water Quality */}
-                  <div className="space-y-6">
-                    <h3 className="text-lg font-semibold text-slate-900 flex items-center">
-                      <Zap className="h-5 w-5 mr-2 text-slate-600" />
-                      Water Quality Parameters
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      <FormField
-                        control={form.control}
-                        name="ph"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-slate-700 font-medium">pH</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="number" 
-                                step="0.1" 
-                                {...field} 
-                                className="border-slate-200 focus:border-slate-400 focus:ring-slate-400"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="temperature"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-slate-700 font-medium">Temperature (°C)</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="number" 
-                                step="0.1" 
-                                {...field} 
-                                className="border-slate-200 focus:border-slate-400 focus:ring-slate-400"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="toc"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-slate-700 font-medium">TOC (mg/L)</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="number" 
-                                step="0.1" 
-                                {...field} 
-                                className="border-slate-200 focus:border-slate-400 focus:ring-slate-400"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </div>
-
-                  {/* PFAS Concentrations */}
-                  <div className="space-y-6">
-                    <h3 className="text-lg font-semibold text-slate-900 flex items-center">
-                      <Shield className="h-5 w-5 mr-2 text-slate-600" />
-                      PFAS Concentrations (ng/L)
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      <FormField
-                        control={form.control}
-                        name="pfoaConcentration"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-slate-700 font-medium">PFOA</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="number" 
-                                step="0.1" 
-                                {...field} 
-                                className="border-slate-200 focus:border-slate-400 focus:ring-slate-400"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="pfosConcentration"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-slate-700 font-medium">PFOS</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="number" 
-                                step="0.1" 
-                                {...field} 
-                                className="border-slate-200 focus:border-slate-400 focus:ring-slate-400"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="totalPfasConcentration"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-slate-700 font-medium">Total PFAS</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="number" 
-                                step="0.1" 
-                                {...field} 
-                                className="border-slate-200 focus:border-slate-400 focus:ring-slate-400"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </div>
-
-                  {/* GAC Properties */}
-                  <div className="space-y-6">
-                    <h3 className="text-lg font-semibold text-slate-900 flex items-center">
-                      <Target className="h-5 w-5 mr-2 text-slate-600" />
-                      GAC Properties
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      <FormField
-                        control={form.control}
-                        name="gacType"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-slate-700 font-medium">GAC Type</FormLabel>
-                            <FormControl>
-                              <Input 
-                                {...field} 
-                                className="border-slate-200 focus:border-slate-400 focus:ring-slate-400"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="gacDensity"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-slate-700 font-medium">Density (kg/m³)</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="number" 
-                                step="0.1" 
-                                {...field} 
-                                className="border-slate-200 focus:border-slate-400 focus:ring-slate-400"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="gacCostPerKg"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-slate-700 font-medium">Cost per kg ($)</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="number" 
-                                step="0.01" 
-                                {...field} 
-                                className="border-slate-200 focus:border-slate-400 focus:ring-slate-400"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Submit Button */}
-                  <div className="pt-8">
-                    <Button 
-                      type="submit" 
-                      size="lg" 
-                      className="w-full bg-slate-900 hover:bg-slate-800 text-white py-4 text-lg font-medium rounded-xl"
-                      disabled={isSubmitting}
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                          {analysisStep || 'Processing...'}
-                        </>
-                      ) : (
-                        'Submit Analysis'
+                            <SelectContent>
+                              <SelectItem value="Fixed Bed">Fixed Bed</SelectItem>
+                              <SelectItem value="Moving Bed">Moving Bed</SelectItem>
+                              <SelectItem value="Fluidized Bed">Fluidized Bed</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
                       )}
-                    </Button>
-                  </div>
+                    />
 
-                  {/* Error/Success Messages */}
-                  {submitError && (
-                    <div className="p-4 bg-red-50 border border-red-200 rounded-xl">
-                      <p className="text-red-700">{submitError}</p>
-                    </div>
+                    <FormField
+                      control={form.control}
+                      name="vesselDiameter"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Vessel Diameter (m)</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="number" 
+                              step="0.1"
+                              className="border-gray-200 focus:border-gray-400 focus:ring-gray-400"
+                              {...field} 
+                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="vesselHeight"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Vessel Height (m)</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="number" 
+                              step="0.1"
+                              className="border-gray-200 focus:border-gray-400 focus:ring-gray-400"
+                              {...field} 
+                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="flowRate"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Flow Rate (m³/h)</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="number" 
+                              step="0.1"
+                              className="border-gray-200 focus:border-gray-400 focus:ring-gray-400"
+                              {...field} 
+                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* GAC Properties */}
+              <Card className="bg-white border-gray-200">
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Gauge className="h-5 w-5 text-gray-700" />
+                    <span>GAC Properties</span>
+                  </CardTitle>
+                  <CardDescription>
+                    Characteristics of your granular activated carbon
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="gacType"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>GAC Type</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger className="border-gray-200">
+                                <SelectValue placeholder="Select GAC type" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="Coal Based">Coal Based</SelectItem>
+                              <SelectItem value="Coconut Shell">Coconut Shell</SelectItem>
+                              <SelectItem value="Wood Based">Wood Based</SelectItem>
+                              <SelectItem value="Lignite">Lignite</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="gacDensity"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>GAC Density (g/cm³)</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="number" 
+                              step="0.01"
+                              className="border-gray-200 focus:border-gray-400 focus:ring-gray-400"
+                              {...field} 
+                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="iodineNumber"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Iodine Number (mg/g)</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="number" 
+                              step="10"
+                              className="border-gray-200 focus:border-gray-400 focus:ring-gray-400"
+                              {...field} 
+                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="surfaceArea"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Surface Area (m²/g)</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="number" 
+                              step="10"
+                              className="border-gray-200 focus:border-gray-400 focus:ring-gray-400"
+                              {...field} 
+                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Water Quality */}
+              <Card className="bg-white border-gray-200">
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Shield className="h-5 w-5 text-gray-700" />
+                    <span>Water Quality Parameters</span>
+                  </CardTitle>
+                  <CardDescription>
+                    Current water quality conditions
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="phValue"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>pH Value</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="number" 
+                              step="0.1"
+                              className="border-gray-200 focus:border-gray-400 focus:ring-gray-400"
+                              {...field} 
+                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="waterTemperature"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Water Temperature (°C)</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="number" 
+                              step="0.1"
+                              className="border-gray-200 focus:border-gray-400 focus:ring-gray-400"
+                              {...field} 
+                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="contaminantConcentration"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Contaminant Concentration (mg/L)</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="number" 
+                              step="0.1"
+                              className="border-gray-200 focus:border-gray-400 focus:ring-gray-400"
+                              {...field} 
+                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="targetRemoval"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Target Removal Efficiency (%)</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="number" 
+                              step="1"
+                              className="border-gray-200 focus:border-gray-400 focus:ring-gray-400"
+                              {...field} 
+                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Operational Parameters */}
+              <Card className="bg-white border-gray-200">
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Activity className="h-5 w-5 text-gray-700" />
+                    <span>Operational Parameters</span>
+                  </CardTitle>
+                  <CardDescription>
+                    Current operational settings and performance metrics
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="emptyBedContactTime"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Empty Bed Contact Time (min)</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="number" 
+                              step="0.1"
+                              className="border-gray-200 focus:border-gray-400 focus:ring-gray-400"
+                              {...field} 
+                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="regenerationFrequency"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Regeneration Frequency (days)</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="number" 
+                              step="1"
+                              className="border-gray-200 focus:border-gray-400 focus:ring-gray-400"
+                              {...field} 
+                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="sorbentCost"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Sorbent Cost ($/kg)</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="number" 
+                              step="0.1"
+                              className="border-gray-200 focus:border-gray-400 focus:ring-gray-400"
+                              {...field} 
+                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="laborCost"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Labor Cost ($/hour)</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="number" 
+                              step="1"
+                              className="border-gray-200 focus:border-gray-400 focus:ring-gray-400"
+                              {...field} 
+                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Submit Button */}
+              <div className="flex justify-center">
+                <Button 
+                  type="submit" 
+                  disabled={isSubmitting}
+                  className="bg-gray-900 hover:bg-gray-800 text-white px-12 py-4 text-lg font-medium"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      Analyzing System...
+                    </>
+                  ) : (
+                    <>
+                      <Target className="mr-2 h-5 w-5" />
+                      Submit for Analysis
+                    </>
                   )}
-                  {submitSuccess && (
-                    <div className="p-4 bg-green-50 border border-green-200 rounded-xl">
-                      <p className="text-green-700">{submitSuccess}</p>
-                    </div>
-                  )}
-                </form>
-              </Form>
-            </CardContent>
-          </Card>
+                </Button>
+              </div>
+            </form>
+          </Form>
+
+          {/* Guarantee */}
+          <div className="mt-12 text-center">
+            <Card className="bg-blue-50 border-blue-200">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-center space-x-3 mb-4">
+                  <Shield className="h-8 w-8 text-blue-600" />
+                  <h3 className="text-xl font-semibold text-blue-900">Performance Guarantee</h3>
+                </div>
+                <p className="text-blue-800">
+                  We guarantee <span className="font-semibold">$200,000+ in cost savings</span> or your analysis is completely free.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </div>
