@@ -21,7 +21,7 @@ export interface EmailOptions {
   subject: string
   html?: string
   text?: string
-  react?: any
+  react?: unknown
 }
 
 // Enhanced email sending with multiple strategies

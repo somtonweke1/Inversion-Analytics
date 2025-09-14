@@ -8,18 +8,13 @@ import {
   CheckCircle, 
   ArrowLeft, 
   BarChart3, 
-  Target,
   TrendingUp,
   DollarSign,
   Clock,
   Users,
-  Shield,
-  ArrowRight,
-  Phone,
   Mail,
   Calendar,
   Activity,
-  Award,
   Briefcase,
   Gauge
 } from 'lucide-react'
@@ -38,7 +33,7 @@ interface AnalysisResults {
   roi: number
 }
 
-export default function AnalysisSuccessPage({ params }: { params: Promise<{ id: string }> }) {
+export default function AnalysisSuccessPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [analysisResults, setAnalysisResults] = useState<AnalysisResults | null>(null)
   const [showImplementationModal, setShowImplementationModal] = useState(false)
@@ -198,7 +193,7 @@ export default function AnalysisSuccessPage({ params }: { params: Promise<{ id: 
                 Implementation Options
               </h2>
               <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                Choose the level of support that best fits your organization's needs and timeline.
+                Choose the level of support that best fits your organization&apos;s needs and timeline.
               </p>
             </div>
 
@@ -416,7 +411,7 @@ export default function AnalysisSuccessPage({ params }: { params: Promise<{ id: 
                 Schedule Implementation Consultation
               </CardTitle>
               <CardDescription>
-                Let's discuss how we can help you achieve these savings
+                Let&apos;s discuss how we can help you achieve these savings
               </CardDescription>
             </CardHeader>
             <CardContent>

@@ -40,16 +40,23 @@ export async function POST(request: NextRequest) {
       companyName: contactRequest.companyName,
       dataFormUrl,
     })
-    
+
     // If Resend fails due to domain restrictions, try SendGrid
     if (!result.success && result.error?.includes('domain')) {
       console.log('[email] Resend failed, trying SendGrid...')
-      result = await sendDataFormEmailViaSendGrid({
+      const sendGridResult = await sendDataFormEmailViaSendGrid({
         contactName: contactRequest.contactName,
         contactEmail: contactRequest.contactEmail,
         companyName: contactRequest.companyName,
         dataFormUrl,
       })
+      result = {
+        success: sendGridResult.success,
+        id: sendGridResult.id,
+        error: sendGridResult.error,
+        warning: sendGridResult.warning,
+        deliveryMethod: 'fallback' as const
+      }
     }
     
     return NextResponse.json({

@@ -42,62 +42,46 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
       bedHeight: 2.5,
       vesselVolume: 9.42,
       gacType: 'Coal Based',
-      gacDensity: 0.5,
-      particleSize: 1.5,
-      iodineNumber: 1000,
-      surfaceArea: 900,
-      poreVolume: 0.6,
-      ashContent: 8.0,
-      moistureContent: 5.0,
-      phValue: 7.0,
-      waterTemperature: 25.0,
-      totalDissolvedSolids: 500,
-      turbidity: 1.0,
-      chlorineResidual: 0.5,
-      organicCarbon: 2.0,
-      targetContaminants: ['Chlorine', 'Taste and Odor'],
-      contaminantConcentration: 1.0,
-      targetRemoval: 95.0,
-      emptyBedContactTime: 15.0,
-      hydraulicLoadingRate: 10.0,
-      bedVolumeUtilization: 80.0,
-      regenerationFrequency: 180,
-      regenerationMethod: 'Thermal',
-      regenerationTemperature: 850.0,
-      regenerationTime: 8.0,
-      sorbentCost: 5.0,
-      laborCost: 100.0,
-      disposalCost: 50.0,
-      energyCost: 2.0,
-      complianceRequirements: ['EPA', 'State Regulations'],
-      monitoringFrequency: 'Daily',
-      reportingRequirements: 'Monthly',
-      performanceMetrics: ['Removal Efficiency', 'Pressure Drop'],
-      optimizationGoals: ['Cost Reduction', 'Extended Bed Life'],
-      environmentalFactors: ['Temperature Variation', 'Flow Rate Changes'],
-      operationalConstraints: ['Limited Downtime', 'Budget Constraints'],
-      historicalData: 'Available',
-      previousOptimization: 'None',
-      maintenanceSchedule: 'Quarterly',
-      operatorExperience: 'Intermediate',
-      trainingNeeds: 'Basic',
-      technologyReadiness: 'High'
-    }
+      gacDensity: 500,
+      gacParticleSize: 1.5,
+      gacIodineNumber: 1000,
+      gacSurfaceArea: 900,
+      bedVolume: 7.85,
+      ebct: 15.0,
+      toc: 2.0,
+      sulfate: 50.0,
+      chloride: 25.0,
+      alkalinity: 100.0,
+      hardness: 150.0,
+      ph: 7.0,
+      temperature: 25.0,
+      pfoaConcentration: 100.0,
+      pfosConcentration: 50.0,
+      pfnaConcentration: 25.0,
+      pfhxaConcentration: 75.0,
+      pfhxsConcentration: 30.0,
+      pfdaConcentration: 20.0,
+      pfbsConcentration: 40.0,
+      pfhpaConcentration: 15.0,
+      pfundaConcentration: 10.0,
+      pfdoaConcentration: 5.0,
+      totalPfasConcentration: 370.0,
+      gacCostPerKg: 5.0,
+      replacementCost: 25000,
+      laborCost: 10000,
+      disposalCost: 5000,
+      operatingDaysPerYear: 330,
+      operatingHoursPerDay: 24,
+      targetRemovalEfficiency: 95.0,
+      safetyFactor: 1.5
+    },
   })
-
-  useEffect(() => {
-    // Simulate loading
-    setTimeout(() => {
-      setIsLoading(false)
-    }, 1000)
-  }, [])
 
   const onSubmit = async (data: DataSubmissionFormData) => {
     setIsSubmitting(true)
     setSubmitError(null)
-    
+
     try {
-      // Simulate analysis steps
       const steps = [
         'Initializing system analysis...',
         'Processing GAC parameters...',
@@ -130,8 +114,9 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
         setIsSubmitted(true)
         
         // Redirect to analysis success page after a short delay
-        setTimeout(() => {
-          window.location.href = `/analysis-success/${(await params).id}`
+        setTimeout(async () => {
+          const resolvedParams = await params
+          window.location.href = `/analysis-success/${resolvedParams.id}`
         }, 2000)
       } else {
         setSubmitError('Failed to submit data. Please try again.')
@@ -234,9 +219,9 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
           )}
 
           {/* Form */}
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              {/* System Configuration */}
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                  {/* System Configuration */}
               <Card className="bg-white border-gray-200">
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
@@ -248,89 +233,89 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="systemType"
-                      render={({ field }) => (
-                        <FormItem>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <FormField
+                        control={form.control}
+                        name="systemType"
+                        render={({ field }) => (
+                          <FormItem>
                           <FormLabel>System Type</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
                               <SelectTrigger className="border-gray-200">
-                                <SelectValue placeholder="Select system type" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="Fixed Bed">Fixed Bed</SelectItem>
-                              <SelectItem value="Moving Bed">Moving Bed</SelectItem>
-                              <SelectItem value="Fluidized Bed">Fluidized Bed</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                                  <SelectValue placeholder="Select system type" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="Fixed Bed">Fixed Bed</SelectItem>
+                                <SelectItem value="Moving Bed">Moving Bed</SelectItem>
+                                <SelectItem value="Fluidized Bed">Fluidized Bed</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <FormField
-                      control={form.control}
+                      <FormField
+                        control={form.control}
                       name="vesselDiameter"
-                      render={({ field }) => (
-                        <FormItem>
+                        render={({ field }) => (
+                          <FormItem>
                           <FormLabel>Vessel Diameter (m)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="number" 
-                              step="0.1"
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                step="0.1" 
                               className="border-gray-200 focus:border-gray-400 focus:ring-gray-400"
-                              {...field} 
+                                {...field} 
                               onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <FormField
-                      control={form.control}
+                      <FormField
+                        control={form.control}
                       name="vesselHeight"
-                      render={({ field }) => (
-                        <FormItem>
+                        render={({ field }) => (
+                          <FormItem>
                           <FormLabel>Vessel Height (m)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="number" 
-                              step="0.1"
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                step="0.1" 
                               className="border-gray-200 focus:border-gray-400 focus:ring-gray-400"
-                              {...field} 
+                                {...field} 
                               onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <FormField
-                      control={form.control}
+                      <FormField
+                        control={form.control}
                       name="flowRate"
-                      render={({ field }) => (
-                        <FormItem>
+                        render={({ field }) => (
+                          <FormItem>
                           <FormLabel>Flow Rate (m³/h)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="number" 
-                              step="0.1"
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                step="0.1" 
                               className="border-gray-200 focus:border-gray-400 focus:ring-gray-400"
-                              {...field} 
+                                {...field} 
                               onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                   </div>
                 </CardContent>
               </Card>
@@ -348,11 +333,11 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
+                      <FormField
+                        control={form.control}
                       name="gacType"
-                      render={({ field }) => (
-                        <FormItem>
+                        render={({ field }) => (
+                          <FormItem>
                           <FormLabel>GAC Type</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
@@ -378,59 +363,59 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>GAC Density (g/cm³)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="number" 
+                            <FormControl>
+                              <Input 
+                                type="number" 
                               step="0.01"
                               className="border-gray-200 focus:border-gray-400 focus:ring-gray-400"
-                              {...field} 
+                                {...field} 
                               onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <FormField
-                      control={form.control}
-                      name="iodineNumber"
-                      render={({ field }) => (
-                        <FormItem>
+                      <FormField
+                        control={form.control}
+                      name="gacIodineNumber"
+                        render={({ field }) => (
+                          <FormItem>
                           <FormLabel>Iodine Number (mg/g)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="number" 
+                            <FormControl>
+                              <Input 
+                                type="number" 
                               step="10"
                               className="border-gray-200 focus:border-gray-400 focus:ring-gray-400"
-                              {...field} 
+                                {...field} 
                               onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <FormField
-                      control={form.control}
-                      name="surfaceArea"
-                      render={({ field }) => (
-                        <FormItem>
+                      <FormField
+                        control={form.control}
+                      name="gacSurfaceArea"
+                        render={({ field }) => (
+                          <FormItem>
                           <FormLabel>Surface Area (m²/g)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="number" 
+                            <FormControl>
+                              <Input 
+                                type="number" 
                               step="10"
                               className="border-gray-200 focus:border-gray-400 focus:ring-gray-400"
-                              {...field} 
+                                {...field} 
                               onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                   </div>
                 </CardContent>
               </Card>
@@ -448,86 +433,86 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
+                      <FormField
+                        control={form.control}
                       name="phValue"
-                      render={({ field }) => (
-                        <FormItem>
+                        render={({ field }) => (
+                          <FormItem>
                           <FormLabel>pH Value</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="number" 
-                              step="0.1"
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                step="0.1" 
                               className="border-gray-200 focus:border-gray-400 focus:ring-gray-400"
-                              {...field} 
+                                {...field} 
                               onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <FormField
-                      control={form.control}
+                      <FormField
+                        control={form.control}
                       name="waterTemperature"
-                      render={({ field }) => (
-                        <FormItem>
+                        render={({ field }) => (
+                          <FormItem>
                           <FormLabel>Water Temperature (°C)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="number" 
-                              step="0.1"
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                step="0.1" 
                               className="border-gray-200 focus:border-gray-400 focus:ring-gray-400"
-                              {...field} 
+                                {...field} 
                               onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <FormField
-                      control={form.control}
+                      <FormField
+                        control={form.control}
                       name="contaminantConcentration"
-                      render={({ field }) => (
-                        <FormItem>
+                        render={({ field }) => (
+                          <FormItem>
                           <FormLabel>Contaminant Concentration (mg/L)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="number" 
-                              step="0.1"
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                step="0.1" 
                               className="border-gray-200 focus:border-gray-400 focus:ring-gray-400"
-                              {...field} 
+                                {...field} 
                               onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <FormField
-                      control={form.control}
+                      <FormField
+                        control={form.control}
                       name="targetRemoval"
-                      render={({ field }) => (
-                        <FormItem>
+                        render={({ field }) => (
+                          <FormItem>
                           <FormLabel>Target Removal Efficiency (%)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="number" 
+                            <FormControl>
+                              <Input 
+                                type="number" 
                               step="1"
                               className="border-gray-200 focus:border-gray-400 focus:ring-gray-400"
-                              {...field} 
+                                {...field} 
                               onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                 </CardContent>
               </Card>
 
@@ -564,91 +549,91 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
                       )}
                     />
 
-                    <FormField
-                      control={form.control}
+                      <FormField
+                        control={form.control}
                       name="regenerationFrequency"
-                      render={({ field }) => (
-                        <FormItem>
+                        render={({ field }) => (
+                          <FormItem>
                           <FormLabel>Regeneration Frequency (days)</FormLabel>
-                          <FormControl>
-                            <Input 
+                            <FormControl>
+                              <Input 
                               type="number" 
                               step="1"
                               className="border-gray-200 focus:border-gray-400 focus:ring-gray-400"
-                              {...field} 
+                                {...field} 
                               onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <FormField
-                      control={form.control}
+                      <FormField
+                        control={form.control}
                       name="sorbentCost"
-                      render={({ field }) => (
-                        <FormItem>
+                        render={({ field }) => (
+                          <FormItem>
                           <FormLabel>Sorbent Cost ($/kg)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="number" 
-                              step="0.1"
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                step="0.1" 
                               className="border-gray-200 focus:border-gray-400 focus:ring-gray-400"
-                              {...field} 
+                                {...field} 
                               onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <FormField
-                      control={form.control}
+                      <FormField
+                        control={form.control}
                       name="laborCost"
-                      render={({ field }) => (
-                        <FormItem>
+                        render={({ field }) => (
+                          <FormItem>
                           <FormLabel>Labor Cost ($/hour)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="number" 
+                            <FormControl>
+                              <Input 
+                                type="number" 
                               step="1"
                               className="border-gray-200 focus:border-gray-400 focus:ring-gray-400"
-                              {...field} 
+                                {...field} 
                               onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                 </CardContent>
               </Card>
 
-              {/* Submit Button */}
+                  {/* Submit Button */}
               <div className="flex justify-center">
-                <Button 
-                  type="submit" 
-                  disabled={isSubmitting}
+                    <Button 
+                      type="submit" 
+                      disabled={isSubmitting}
                   className="bg-gray-900 hover:bg-gray-800 text-white px-12 py-4 text-lg font-medium"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                       Analyzing System...
-                    </>
-                  ) : (
+                        </>
+                      ) : (
                     <>
                       <Target className="mr-2 h-5 w-5" />
                       Submit for Analysis
                     </>
-                  )}
-                </Button>
-              </div>
-            </form>
-          </Form>
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              </Form>
 
           {/* Guarantee */}
           <div className="mt-12 text-center">
@@ -661,8 +646,8 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
                 <p className="text-blue-800">
                   We guarantee <span className="font-semibold">$200,000+ in cost savings</span> or your analysis is completely free.
                 </p>
-              </CardContent>
-            </Card>
+            </CardContent>
+          </Card>
           </div>
         </div>
       </div>

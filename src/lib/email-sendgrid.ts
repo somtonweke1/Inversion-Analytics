@@ -56,12 +56,12 @@ export async function sendEmailViaSendGrid({
       id: response[0]?.headers?.['x-message-id'] || `sendgrid-${Date.now()}`,
       deliveryMethod: 'sendgrid'
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('SendGrid error:', error)
     
     return {
       success: false,
-      error: error.message || 'SendGrid delivery failed',
+      error: error instanceof Error ? error.message : 'SendGrid delivery failed',
       deliveryMethod: 'sendgrid'
     }
   }

@@ -15,11 +15,6 @@ import {
   Loader2, 
   CheckCircle,
   Activity,
-  Award,
-  Briefcase,
-  Users,
-  Clock,
-  DollarSign,
   Mail
 } from 'lucide-react'
 import Link from 'next/link'
@@ -233,7 +228,7 @@ export default function HomePage() {
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900">Guaranteed Savings</h3>
-                    <p className="text-sm text-gray-600">$200k+ or it's free</p>
+                    <p className="text-sm text-gray-600">$200k+ or it&apos;s free</p>
                   </div>
                 </div>
                 <p className="text-gray-700 leading-relaxed">

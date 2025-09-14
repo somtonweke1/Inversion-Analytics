@@ -17,7 +17,7 @@ interface Project {
 }
 
 // Mock data - in production, this would come from a database
-let projects: Project[] = [
+const projects: Project[] = [
   {
     id: 'proj_001',
     clientId: 'contact_1757785446652_qo5ebn498',
