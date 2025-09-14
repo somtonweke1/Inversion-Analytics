@@ -72,7 +72,7 @@ export const EmailWithLink = ({
         
         <Text style={text}>
           If you have any questions or need assistance, please don&apos;t hesitate to contact us 
-          at admin@axiomanalytics.com.
+          at admin@inversionanalytics.com.
         </Text>
         
         <Text style={text}>

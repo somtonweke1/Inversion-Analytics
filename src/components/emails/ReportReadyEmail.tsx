@@ -86,7 +86,7 @@ export const ReportReadyEmail = ({
         
         <Text style={text}>
           If you have any questions about the analysis or would like to discuss the results 
-          with our team, please contact us at admin@axiomanalytics.com.
+          with our team, please contact us at admin@inversionanalytics.com.
         </Text>
         
         <Text style={text}>

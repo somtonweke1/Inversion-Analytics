@@ -1,6 +1,6 @@
-# Inversion Analytics MVP
+# Inversion Analytics
 
-A comprehensive web application that automates the "Axiom Health Report" process for GAC (Granular Activated Carbon) system analysis. The platform allows data center operators to request reports, submit technical data, and receive professionally generated PDF analyses.
+A comprehensive web application that automates water treatment optimization for GAC (Granular Activated Carbon) system analysis. The platform allows water treatment facilities to request reports, submit technical data, and receive professionally generated PDF analyses with cost optimization recommendations.
 
 ## Features
 
@@ -54,7 +54,7 @@ NEXTAUTH_SECRET="your-secret-key-here"
 RESEND_API_KEY="your-resend-api-key-here"
 
 # Admin Access
-ADMIN_EMAIL="admin@axiomanalytics.com"
+ADMIN_EMAIL="admin@inversionanalytics.com"
 ADMIN_PASSWORD="admin123"
 ```
 
@@ -145,7 +145,7 @@ Automated email notifications:
 - **Login**: `/admin/login`
 - **Dashboard**: `/admin/dashboard`
 - **Default Credentials**: 
-  - Email: `admin@axiomanalytics.com`
+  - Email: `admin@inversionanalytics.com`
   - Password: `admin123`
 
 ## 🚀 Deployment

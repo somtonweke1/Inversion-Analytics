@@ -38,7 +38,7 @@ This will test the core analysis functionality without requiring a database.
    NEXTAUTH_URL=https://your-domain.vercel.app
    NEXTAUTH_SECRET=your-secret-key-here
    RESEND_API_KEY=your-resend-api-key
-   ADMIN_EMAIL=admin@axiomanalytics.com
+   ADMIN_EMAIL=admin@inversionanalytics.com
    ADMIN_PASSWORD=your-secure-password
    ```
 
