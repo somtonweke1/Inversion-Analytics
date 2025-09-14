@@ -65,3 +65,4 @@ console.log('3. Change from address to your verified domain')
 console.log('4. Test with real email addresses')
 console.log('')
 console.log('📖 See EMAIL_SETUP_GUIDE.md for detailed instructions')
+

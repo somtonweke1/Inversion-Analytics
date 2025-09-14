@@ -1,12 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { 
-  Calendar, 
   DollarSign, 
   TrendingUp, 
   Users, 
@@ -46,11 +45,7 @@ export default function ProjectsPage() {
     totalSavings: 0
   })
 
-  useEffect(() => {
-    fetchProjects()
-  }, [])
-
-  const fetchProjects = async () => {
+  const fetchProjects = useCallback(async () => {
     try {
       const response = await fetch('/api/client-projects')
       const data = await response.json()
@@ -64,7 +59,11 @@ export default function ProjectsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    fetchProjects()
+  }, [fetchProjects])
 
   const calculateStats = (projectList: Project[]) => {
     const totalProjects = projectList.length
@@ -368,3 +367,4 @@ export default function ProjectsPage() {
     </div>
   )
 }
+

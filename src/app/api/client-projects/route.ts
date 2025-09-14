@@ -35,13 +35,13 @@ const projects: Project[] = [
   }
 ]
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     return NextResponse.json({
       success: true,
       projects: projects
     })
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch projects' },
       { status: 500 }
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
       success: true,
       project: newProject
     })
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to create project' },
       { status: 500 }
@@ -106,7 +106,7 @@ export async function PUT(request: NextRequest) {
       success: true,
       project: projects[projectIndex]
     })
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to update project' },
       { status: 500 }

@@ -4,6 +4,7 @@
  */
 
 import { Resend } from 'resend'
+import React from 'react'
 
 const hasResendKey = Boolean(process.env.RESEND_API_KEY)
 const resend = hasResendKey ? new Resend(process.env.RESEND_API_KEY) : null as unknown as Resend
@@ -21,7 +22,7 @@ export interface EmailOptions {
   subject: string
   html?: string
   text?: string
-  react?: unknown
+  react?: React.ReactElement
 }
 
 // Enhanced email sending with multiple strategies

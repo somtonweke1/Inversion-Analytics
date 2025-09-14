@@ -61,3 +61,4 @@ console.log('')
 
 console.log('🎉 Ready to set up SendGrid?')
 console.log('Follow the steps above and your emails will work immediately!')
+

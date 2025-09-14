@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui/button'
@@ -18,14 +18,12 @@ import {
   Gauge, 
   Shield,
   Target,
-  TrendingUp,
-  Activity,
-  Clock
+  Activity
 } from 'lucide-react'
 import Link from 'next/link'
 
 export default function DataFormPage({ params }: { params: Promise<{ id: string }> }) {
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
@@ -109,7 +107,7 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
       })
 
       if (response.ok) {
-        const result = await response.json()
+        await response.json()
         setSubmitSuccess('Analysis complete! Your comprehensive optimization report has been sent to your email.')
         setIsSubmitted(true)
         
@@ -435,7 +433,7 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <FormField
                         control={form.control}
-                      name="phValue"
+                      name="ph"
                         render={({ field }) => (
                           <FormItem>
                           <FormLabel>pH Value</FormLabel>
@@ -455,7 +453,7 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
 
                       <FormField
                         control={form.control}
-                      name="waterTemperature"
+                      name="temperature"
                         render={({ field }) => (
                           <FormItem>
                           <FormLabel>Water Temperature (°C)</FormLabel>
@@ -475,7 +473,7 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
 
                       <FormField
                         control={form.control}
-                      name="contaminantConcentration"
+                      name="toc"
                         render={({ field }) => (
                           <FormItem>
                           <FormLabel>Contaminant Concentration (mg/L)</FormLabel>
@@ -495,7 +493,7 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
 
                       <FormField
                         control={form.control}
-                      name="targetRemoval"
+                      name="targetRemovalEfficiency"
                         render={({ field }) => (
                           <FormItem>
                           <FormLabel>Target Removal Efficiency (%)</FormLabel>
@@ -531,7 +529,7 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField
                       control={form.control}
-                      name="emptyBedContactTime"
+                      name="ebct"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Empty Bed Contact Time (min)</FormLabel>
@@ -551,7 +549,7 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
 
                       <FormField
                         control={form.control}
-                      name="regenerationFrequency"
+                      name="operatingDaysPerYear"
                         render={({ field }) => (
                           <FormItem>
                           <FormLabel>Regeneration Frequency (days)</FormLabel>
@@ -571,7 +569,7 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
 
                       <FormField
                         control={form.control}
-                      name="sorbentCost"
+                      name="gacCostPerKg"
                         render={({ field }) => (
                           <FormItem>
                           <FormLabel>Sorbent Cost ($/kg)</FormLabel>

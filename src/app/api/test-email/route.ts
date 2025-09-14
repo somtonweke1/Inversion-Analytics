@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     // Check if environment variables are set
     const hasResendKey = Boolean(process.env.RESEND_API_KEY)
@@ -19,4 +19,5 @@ export async function GET(request: NextRequest) {
     )
   }
 }
+
 

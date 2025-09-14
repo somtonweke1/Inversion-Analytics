@@ -11,15 +11,11 @@ import {
   TrendingUp,
   Clock,
   Target,
-  Activity,
   Download,
-  Share2,
   Printer,
   Gauge,
   Shield,
-  CheckCircle,
-  AlertTriangle,
-  Info
+  CheckCircle
 } from 'lucide-react'
 import Link from 'next/link'
 

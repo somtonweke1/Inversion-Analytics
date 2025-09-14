@@ -86,3 +86,4 @@ All pages are fully responsive and work perfectly on:
 **🎯 Your Inversion Analytics platform is LIVE and ready to generate revenue!**
 
 **Primary URL**: `https://axiom-mvp.vercel.app`
+

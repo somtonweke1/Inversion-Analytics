@@ -137,3 +137,4 @@ node email-test-demo.js
 - ⚠️ **Email delivery**: Requires API key setup (5 minutes)
 
 **Your Inversion Analytics platform is ready to generate revenue!** 🚀
+

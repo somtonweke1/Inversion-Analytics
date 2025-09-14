@@ -89,3 +89,4 @@ console.log('')
 
 console.log('🎉 Ready to set up domain verification?')
 console.log('Follow the steps above and your email system will be fully functional!')
+
