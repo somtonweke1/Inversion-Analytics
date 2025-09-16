@@ -210,6 +210,6 @@ For technical support or questions:
 
 ---
 
-*"The best way to find out if you can trust somebody is to trust them."* — Ernest Hemingway
+
 
 **Built with ❤️ for water treatment optimization**
