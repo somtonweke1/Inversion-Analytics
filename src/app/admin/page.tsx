@@ -8,7 +8,6 @@ import {
   Users, 
   Mail, 
   TrendingUp, 
-  BarChart3,
   Activity,
   DollarSign,
   Target,
@@ -103,7 +102,6 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
-                <BarChart3 className="h-4 w-4 text-white" />
               </div>
               <span className="text-xl font-semibold text-gray-900">Admin Dashboard</span>
             </div>

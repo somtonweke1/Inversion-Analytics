@@ -6,15 +6,19 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model ContactRequest {
   id            String   @id @default(cuid())
   companyName   String
   contactName   String
-  contactEmail  String   @unique
+  contactEmail  String
+  latitude      Float?   // Site latitude
+  longitude     Float?   // Site longitude
+  city          String?  // City name
+  state         String?  // State/Province
   createdAt     DateTime @default(now())
   status        String   @default("PENDING") // PENDING, DATA_SUBMITTED, REPORT_GENERATED
   reportId      String?  @unique

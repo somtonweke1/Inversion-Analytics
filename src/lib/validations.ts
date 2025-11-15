@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 export const dataSubmissionSchema = z.object({
   // System Configuration
-  systemType: z.enum(['Fixed Bed', 'Fluidized Bed'], {
+  systemType: z.enum(['Fixed Bed', 'Moving Bed', 'Fluidized Bed'], {
     message: 'System type is required'
   }),
   vesselDiameter: z.number().min(0.1, 'Vessel diameter must be at least 0.1m').max(10, 'Vessel diameter must be less than 10m'),

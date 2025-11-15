@@ -1,0 +1,80 @@
+{
+  "metadata": {
+    "template_version": "1.0",
+    "description": "Demo Hazen Dataset - Flint Water Treatment Facility PFAS Validation Study",
+    "instructions": "This is a realistic demo dataset based on Flint, Michigan water treatment data"
+  },
+  "site_information": {
+    "project_name": "Flint WTP PFAS Validation Study",
+    "site_location": "Flint, Michigan, USA",
+    "latitude": 43.0125,
+    "longitude": -83.6875,
+    "facility_type": "Municipal Water Treatment Plant",
+    "start_date": "2024-01-01",
+    "end_date": "2025-01-01"
+  },
+  "system_configuration": {
+    "system_type": "Fixed Bed",
+    "vessel_diameter_m": 3.5,
+    "vessel_height_m": 12.0,
+    "flow_rate_m3h": 1000,
+    "bed_height_m": 2.5,
+    "ebct_minutes": 1.44
+  },
+  "water_quality": {
+    "toc_mgL": 2.5,
+    "sulfate_mgL": 45.0,
+    "chloride_mgL": 25.0,
+    "alkalinity_mgL_CaCO3": 120.0,
+    "hardness_mgL_CaCO3": 150.0,
+    "ph": 7.2,
+    "temperature_C": 15.0
+  },
+  "pfas_concentrations_ngL": {
+    "PFOA": 0.08,
+    "PFOS": 0.12,
+    "PFNA": 0.04,
+    "PFHxA": 0.06,
+    "PFHxS": 0.03,
+    "PFDA": 0.02,
+    "PFBS": 0.01,
+    "PFHpA": 0.00,
+    "PFUnDA": 0.00,
+    "PFDoA": 0.00,
+    "total_PFAS": 0.36
+  },
+  "gac_properties": {
+    "gac_type": "Coconut Shell - Activated Carbon (Calgon F400)",
+    "gac_density_kgm3": 480.0,
+    "gac_particle_size_mm": 1.5,
+    "gac_iodine_number_mgg": 1050.0,
+    "gac_surface_area_m2g": 1200.0
+  },
+  "economic_parameters": {
+    "gac_cost_per_kg_USD": 2.50,
+    "replacement_cost_USD": 15000.0,
+    "labor_cost_USD": 5000.0,
+    "disposal_cost_USD": 3000.0,
+    "operating_days_per_year": 365,
+    "operating_hours_per_day": 24
+  },
+  "operational_parameters": {
+    "target_removal_efficiency_percent": 99.0,
+    "safety_factor": 1.5
+  },
+  "observed_breakthrough_data": [
+    {"time_days": 0, "bed_volumes": 0, "effluent_concentration_ngL": 0.00, "notes": "Initial startup - complete removal"},
+    {"time_days": 30, "bed_volumes": 12500, "effluent_concentration_ngL": 0.01, "notes": "First month - excellent performance"},
+    {"time_days": 60, "bed_volumes": 25000, "effluent_concentration_ngL": 0.01, "notes": "Stable operation"},
+    {"time_days": 90, "bed_volumes": 37500, "effluent_concentration_ngL": 0.02, "notes": "Slight increase observed"},
+    {"time_days": 120, "bed_volumes": 50000, "effluent_concentration_ngL": 0.03, "notes": "Gradual breakthrough beginning"},
+    {"time_days": 150, "bed_volumes": 62500, "effluent_concentration_ngL": 0.04, "notes": "10% breakthrough approaching"},
+    {"time_days": 180, "bed_volumes": 75000, "effluent_concentration_ngL": 0.06, "notes": "Exceeded 10% breakthrough"},
+    {"time_days": 210, "bed_volumes": 87500, "effluent_concentration_ngL": 0.09, "notes": "Rapid breakthrough phase"},
+    {"time_days": 240, "bed_volumes": 100000, "effluent_concentration_ngL": 0.14, "notes": "Significant capacity loss"},
+    {"time_days": 270, "bed_volumes": 112500, "effluent_concentration_ngL": 0.20, "notes": "50% breakthrough"},
+    {"time_days": 300, "bed_volumes": 125000, "effluent_concentration_ngL": 0.26, "notes": "Approaching exhaustion"},
+    {"time_days": 330, "bed_volumes": 137500, "effluent_concentration_ngL": 0.32, "notes": "Near full exhaustion"},
+    {"time_days": 360, "bed_volumes": 150000, "effluent_concentration_ngL": 0.34, "notes": "95% breakthrough - replacement needed"}
+  ]
+}

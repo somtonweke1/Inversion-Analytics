@@ -6,16 +6,16 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { 
-  BarChart3, 
-  Shield, 
-  TrendingUp, 
-  Target, 
-  ArrowRight, 
-  Loader2, 
+import {
+  Shield,
+  TrendingUp,
+  Target,
+  ArrowRight,
+  Loader2,
   CheckCircle,
   Activity,
-  Mail
+  Mail,
+  ExternalLink
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -101,9 +101,6 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
-                <BarChart3 className="h-4 w-4 text-white" />
-              </div>
               <span className="text-xl font-semibold text-gray-900">Inversion Analytics</span>
             </div>
             <div className="flex items-center space-x-6">
@@ -380,17 +377,32 @@ export default function HomePage() {
             <div className="bg-gray-50 rounded-lg p-6 mb-6">
               <p className="text-sm text-gray-600 mb-3">Your secure data submission link:</p>
               <div className="bg-white border border-gray-200 rounded-lg p-3 mb-4">
-                <code className="text-sm text-gray-800 break-all">
+                <a
+                  href={successData?.dataFormUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-blue-600 hover:text-blue-700 underline break-all"
+                >
                   {successData?.dataFormUrl}
-                </code>
+                </a>
               </div>
-              <Button 
-                onClick={handleEmailMeThisLink}
-                className="bg-gray-900 hover:bg-gray-800 text-white"
-              >
-                <Mail className="mr-2 h-4 w-4" />
-                Email Me This Link
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button
+                  onClick={() => window.open(successData?.dataFormUrl, '_blank')}
+                  className="bg-blue-600 hover:bg-blue-700 text-white flex-1"
+                >
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  Open Data Form
+                </Button>
+                <Button
+                  onClick={handleEmailMeThisLink}
+                  variant="outline"
+                  className="border-gray-300 hover:bg-gray-50 flex-1"
+                >
+                  <Mail className="mr-2 h-4 w-4" />
+                  Email Me This Link
+                </Button>
+              </div>
             </div>
             
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">

@@ -5,10 +5,10 @@ export async function GET() {
 }
 
 export async function POST() {
-  return NextResponse.json({ 
-    success: true, 
+  return NextResponse.json({
+    success: true,
     message: 'Simple POST API working!',
     id: 'contact_12345',
-    dataFormUrl: 'https://axiom-mvp.vercel.app/data-form/contact_12345'
+    dataFormUrl: 'https://inversion.works/data-form/contact_12345'
   })
 }

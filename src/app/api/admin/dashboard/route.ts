@@ -34,6 +34,31 @@ export async function GET(request: NextRequest) { // eslint-disable-line @typesc
       }
     })
 
+    // Get project locations for map
+    const projectLocations = await prisma.contactRequest.findMany({
+      where: {
+        AND: [
+          { latitude: { not: null } },
+          { longitude: { not: null } }
+        ]
+      },
+      select: {
+        id: true,
+        companyName: true,
+        city: true,
+        state: true,
+        latitude: true,
+        longitude: true,
+        status: true,
+        report: {
+          select: {
+            projectedLifespanMonths: true,
+            capitalAvoidance: true
+          }
+        }
+      }
+    })
+
     const stats = {
       totalRequests,
       completedReports,
@@ -51,6 +76,17 @@ export async function GET(request: NextRequest) { // eslint-disable-line @typesc
         capitalAvoidance: report.capitalAvoidance,
         generatedAt: report.generatedAt,
         pdfUrl: report.pdfUrl,
+      })),
+      projectLocations: projectLocations.map((project: any) => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
+        id: project.id,
+        companyName: project.companyName,
+        city: project.city,
+        state: project.state,
+        latitude: project.latitude!,
+        longitude: project.longitude!,
+        status: project.status,
+        projectedLifespanMonths: project.report?.projectedLifespanMonths,
+        capitalAvoidance: project.report?.capitalAvoidance
       }))
     })
 

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { BarChart3, Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('')
@@ -54,7 +54,6 @@ export default function AdminLoginPage() {
         <div className="text-center">
           <div className="flex justify-center">
             <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
-              <BarChart3 className="h-6 w-6 text-white" />
             </div>
           </div>
           <h2 className="mt-6 text-3xl font-bold text-slate-900">

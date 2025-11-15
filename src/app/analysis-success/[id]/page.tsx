@@ -4,10 +4,9 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { 
-  CheckCircle, 
-  ArrowLeft, 
-  BarChart3, 
+import {
+  CheckCircle,
+  ArrowLeft,
   TrendingUp,
   DollarSign,
   Clock,
@@ -33,31 +32,48 @@ interface AnalysisResults {
   roi: number
 }
 
-export default function AnalysisSuccessPage() {
+export default function AnalysisSuccessPage({ params }: { params: Promise<{ id: string }> }) {
   const [isLoading, setIsLoading] = useState(true)
   const [analysisResults, setAnalysisResults] = useState<AnalysisResults | null>(null)
   const [showImplementationModal, setShowImplementationModal] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
-    // Mock data for demonstration
-    const mockResults: AnalysisResults = {
-      id: 'analysis_001',
-      companyName: 'Water Treatment Solutions Inc',
-      contactName: 'John Smith',
-      contactEmail: 'john@example.com',
-      potentialSavings: 250000,
-      currentEfficiency: 60,
-      optimalEfficiency: 85,
-      bedLifeDays: 180,
-      paybackPeriod: 8,
-      roi: 400
+    const fetchReport = async () => {
+      try {
+        const resolvedParams = await params
+        const response = await fetch(`/api/report/${resolvedParams.id}`)
+
+        if (!response.ok) {
+          throw new Error('Report not found')
+        }
+
+        const data = await response.json()
+
+        // Transform database report to match AnalysisResults interface
+        const transformedResults: AnalysisResults = {
+          id: data.id,
+          companyName: data.contactRequest.companyName,
+          contactName: data.contactRequest.contactName,
+          contactEmail: data.contactRequest.contactEmail,
+          potentialSavings: data.capitalAvoidance,
+          currentEfficiency: 60,
+          optimalEfficiency: 85,
+          bedLifeDays: Math.round(data.projectedLifespanMonths * 30),
+          paybackPeriod: 8,
+          roi: 400
+        }
+
+        setAnalysisResults(transformedResults)
+        setIsLoading(false)
+      } catch (error) {
+        console.error('Error fetching report:', error)
+        setIsLoading(false)
+      }
     }
-    
-    setTimeout(() => {
-      setAnalysisResults(mockResults)
-      setIsLoading(false)
-    }, 1000)
-  }, [])
+
+    fetchReport()
+  }, [params])
 
   if (isLoading) {
     return (
@@ -90,9 +106,6 @@ export default function AnalysisSuccessPage() {
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
-                <BarChart3 className="h-4 w-4 text-white" />
-              </div>
               <span className="text-xl font-semibold text-gray-900">Inversion Analytics</span>
             </div>
             <Link href="/" className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors">
@@ -341,7 +354,7 @@ export default function AnalysisSuccessPage() {
           <div className="bg-blue-50 border border-blue-200 rounded-xl p-8 mb-8">
             <div className="text-center">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <BarChart3 className="h-8 w-8 text-blue-600" />
+                <Activity className="h-8 w-8 text-blue-600" />
               </div>
               <h3 className="text-2xl font-semibold text-blue-900 mb-4">
                 Your Comprehensive Analysis Report is Ready
@@ -350,11 +363,11 @@ export default function AnalysisSuccessPage() {
                 View your detailed GAC system analysis with specific recommendations, cost breakdowns, and implementation roadmap.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button 
+                <Button
                   className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg font-medium"
                   onClick={() => window.open(`/report/${analysisResults.id}`, '_blank')}
                 >
-                  <BarChart3 className="h-5 w-5 mr-2" />
+                  <Activity className="h-5 w-5 mr-2" />
                   View Full Report
                 </Button>
                 <Button 
@@ -415,14 +428,15 @@ export default function AnalysisSuccessPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+              <form className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Company Name
                     </label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
+                      name="companyName"
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       defaultValue={analysisResults.companyName}
                     />
@@ -431,8 +445,9 @@ export default function AnalysisSuccessPage() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Contact Name
                     </label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
+                      name="contactName"
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       defaultValue={analysisResults.contactName}
                     />
@@ -442,8 +457,9 @@ export default function AnalysisSuccessPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Email Address
                   </label>
-                  <input 
-                    type="email" 
+                  <input
+                    type="email"
+                    name="contactEmail"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     defaultValue={analysisResults.contactEmail}
                   />
@@ -452,7 +468,10 @@ export default function AnalysisSuccessPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Preferred Implementation Package
                   </label>
-                  <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                  <select
+                    name="package"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
                     <option>Guided Implementation - $10,000</option>
                     <option>Full Implementation - $35,000</option>
                     <option>Ongoing Optimization - $3,000/month</option>
@@ -462,28 +481,67 @@ export default function AnalysisSuccessPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Message (Optional)
                   </label>
-                  <textarea 
+                  <textarea
+                    name="message"
                     rows={4}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Tell us about your specific needs or timeline..."
                   />
                 </div>
                 <div className="flex justify-end space-x-3 pt-4">
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     onClick={() => setShowImplementationModal(false)}
                     className="border-gray-300 text-gray-700"
+                    disabled={isSubmitting}
                   >
                     Cancel
                   </Button>
-                  <Button 
+                  <Button
                     className="bg-blue-600 hover:bg-blue-700 text-white"
-                    onClick={() => setShowImplementationModal(false)}
+                    onClick={async (e) => {
+                      e.preventDefault()
+                      setIsSubmitting(true)
+
+                      try {
+                        const formElement = e.currentTarget.closest('form') as HTMLFormElement
+                        const formData = new FormData(formElement)
+
+                        const response = await fetch('/api/consultation', {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({
+                            companyName: formData.get('companyName') || analysisResults?.companyName,
+                            contactName: formData.get('contactName') || analysisResults?.contactName,
+                            contactEmail: formData.get('contactEmail') || analysisResults?.contactEmail,
+                            implementationPackage: formData.get('package'),
+                            message: formData.get('message'),
+                            reportId: analysisResults?.id,
+                          }),
+                        })
+
+                        if (response.ok) {
+                          alert('Consultation request submitted! We will contact you within 24 hours.')
+                          setShowImplementationModal(false)
+                        } else {
+                          const error = await response.json()
+                          alert(`Failed to submit: ${error.error || 'Please try again.'}`)
+                        }
+                      } catch (error) {
+                        console.error('Error submitting consultation request:', error)
+                        alert('Failed to submit consultation request. Please try again.')
+                      } finally {
+                        setIsSubmitting(false)
+                      }
+                    }}
+                    disabled={isSubmitting}
                   >
-                    Schedule Consultation
+                    {isSubmitting ? 'Scheduling...' : 'Schedule Consultation'}
                   </Button>
                 </div>
-              </div>
+              </form>
             </CardContent>
           </Card>
         </div>

@@ -3,9 +3,28 @@
 import { useState, useEffect } from 'react'
 // import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import dynamic from 'next/dynamic'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { BarChart3, Users, FileText, Download, Clock, DollarSign } from 'lucide-react'
+import { Clock, Users, FileText, DollarSign, Download } from 'lucide-react'
+
+// Dynamically import ProjectMap to avoid SSR issues with Leaflet
+const ProjectMap = dynamic(() => import('@/components/ProjectMap'), {
+  ssr: false,
+  loading: () => (
+    <Card>
+      <CardHeader>
+        <CardTitle>Project Locations</CardTitle>
+        <CardDescription>Loading map...</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="h-[500px] flex items-center justify-center">
+          <Clock className="h-8 w-8 animate-spin" />
+        </div>
+      </CardContent>
+    </Card>
+  )
+})
 
 interface DashboardStats {
   totalRequests: number
@@ -24,6 +43,18 @@ interface RecentReport {
   pdfUrl: string
 }
 
+interface ProjectLocation {
+  id: string
+  companyName: string
+  city?: string
+  state?: string
+  latitude: number
+  longitude: number
+  status: string
+  projectedLifespanMonths?: number
+  capitalAvoidance?: number
+}
+
 export default function AdminDashboard() {
   // const { data: session, status } = useSession()
   const session = null
@@ -31,6 +62,7 @@ export default function AdminDashboard() {
   const router = useRouter()
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [recentReports, setRecentReports] = useState<RecentReport[]>([])
+  const [projectLocations, setProjectLocations] = useState<ProjectLocation[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -49,6 +81,8 @@ export default function AdminDashboard() {
           const data = await response.json()
           setStats(data.stats)
           setRecentReports(data.recentReports)
+          // Project locations will be included in dashboard API response
+          setProjectLocations(data.projectLocations || [])
         }
       } catch (error) {
         console.error('Error fetching dashboard data:', error)
@@ -84,7 +118,6 @@ export default function AdminDashboard() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <BarChart3 className="h-8 w-8 text-blue-600" />
               <span className="text-2xl font-bold text-slate-900">Inversion Analytics Admin</span>
             </div>
             <div className="flex items-center space-x-4">
@@ -163,6 +196,11 @@ export default function AdminDashboard() {
             </Card>
           </div>
         )}
+
+        {/* Project Map */}
+        <div className="mb-8">
+          <ProjectMap projects={projectLocations} height="500px" />
+        </div>
 
         {/* Recent Reports */}
         <Card>

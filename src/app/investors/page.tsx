@@ -12,7 +12,6 @@ import {
   Globe, 
   Shield, 
   Users, 
-  BarChart3, 
   ArrowUpRight,
   CheckCircle,
   ArrowLeft,
@@ -118,7 +117,6 @@ export default function InvestorsPage() {
             </div>
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center">
-                <BarChart3 className="h-5 w-5 text-white" />
               </div>
               <span className="text-2xl font-semibold text-slate-900 tracking-tight">Inversion Analytics</span>
             </div>
@@ -158,7 +156,6 @@ export default function InvestorsPage() {
               <Card className="p-8 rounded-2xl border-0 shadow-none bg-white">
                 <CardHeader className="pb-6">
                   <CardTitle className="flex items-center text-xl font-semibold">
-                    <BarChart3 className="w-6 h-6 mr-3 text-slate-700" />
                     Projection Inputs
                   </CardTitle>
                   <CardDescription className="text-slate-600">Adjust parameters to see revenue projections</CardDescription>

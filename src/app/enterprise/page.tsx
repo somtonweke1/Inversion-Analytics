@@ -1,7 +1,7 @@
 'use client'
 
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card'
-import { BarChart3, DollarSign, TrendingUp, Users, Factory, Gauge, CheckCircle, ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Factory, DollarSign, Gauge, TrendingUp, Users, CheckCircle } from 'lucide-react'
 import Link from 'next/link'
 import { AUDIT_PRICE, MONITORING_PRICE_PER_MONTH, SOFTWARE_LICENSE_PRICE_ANNUAL } from '@/lib/revenue-model'
 import { Button } from '@/components/ui/button'
@@ -24,7 +24,6 @@ export default function EnterpriseDashboard() {
             </div>
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center">
-                <BarChart3 className="h-5 w-5 text-white" />
               </div>
               <span className="text-2xl font-semibold text-slate-900 tracking-tight">Inversion Analytics</span>
             </div>

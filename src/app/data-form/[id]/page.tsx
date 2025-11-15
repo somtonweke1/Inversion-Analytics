@@ -9,13 +9,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { dataSubmissionSchema, type DataSubmissionFormData } from '@/lib/validations'
-import { 
-  Loader2, 
-  CheckCircle, 
-  ArrowLeft, 
-  BarChart3, 
-  Factory, 
-  Gauge, 
+import {
+  Loader2,
+  CheckCircle,
+  ArrowLeft,
+  Factory,
+  Gauge,
   Shield,
   Target,
   Activity
@@ -23,7 +22,7 @@ import {
 import Link from 'next/link'
 
 export default function DataFormPage({ params }: { params: Promise<{ id: string }> }) {
-  const [isLoading] = useState(true)
+  const [isLoading] = useState(false)  // Fixed: was stuck on true
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
@@ -94,30 +93,51 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
         await new Promise(resolve => setTimeout(resolve, 800))
       }
       
-      // Submit to API
-      const response = await fetch('/api/data-submission', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contactRequestId: (await params).id,
-          formData: data
-        }),
-      })
+      // Submit to API with timeout
+      console.log('Submitting to API...')
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 120000) // 2 minute timeout
 
-      if (response.ok) {
-        await response.json()
-        setSubmitSuccess('Analysis complete! Your comprehensive optimization report has been sent to your email.')
-        setIsSubmitted(true)
-        
-        // Redirect to analysis success page after a short delay
-        setTimeout(async () => {
-          const resolvedParams = await params
-          window.location.href = `/analysis-success/${resolvedParams.id}`
-        }, 2000)
-      } else {
-        setSubmitError('Failed to submit data. Please try again.')
+      try {
+        const response = await fetch('/api/data-submission', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            contactRequestId: (await params).id,
+            formData: data
+          }),
+          signal: controller.signal
+        })
+
+        clearTimeout(timeoutId)
+        console.log('Response received:', response.status)
+
+        if (response.ok) {
+          const result = await response.json()
+          console.log('Success:', result)
+          setSubmitSuccess('Analysis complete! Your comprehensive optimization report has been sent to your email.')
+          setIsSubmitted(true)
+
+          // Redirect to analysis success page after a short delay
+          setTimeout(async () => {
+            const resolvedParams = await params
+            window.location.href = `/analysis-success/${resolvedParams.id}`
+          }, 2000)
+        } else {
+          const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
+          console.error('API error:', response.status, errorData)
+          setSubmitError(`Failed to submit data: ${errorData.error || errorData.details || 'Please try again.'}`)
+        }
+      } catch (fetchError) {
+        clearTimeout(timeoutId)
+        if (fetchError instanceof Error && fetchError.name === 'AbortError') {
+          console.error('Request timeout')
+          setSubmitError('Request timed out. The analysis is taking longer than expected. Please try again or contact support.')
+        } else {
+          throw fetchError
+        }
       }
     } catch (error) {
       console.error('Error submitting data:', error)
@@ -146,9 +166,6 @@ export default function DataFormPage({ params }: { params: Promise<{ id: string 
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
-                <BarChart3 className="h-4 w-4 text-white" />
-              </div>
               <span className="text-xl font-semibold text-gray-900">Inversion Analytics</span>
             </div>
             <Link href="/" className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors">

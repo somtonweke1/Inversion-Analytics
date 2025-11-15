@@ -4,9 +4,8 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { 
-  ArrowLeft, 
-  BarChart3, 
+import {
+  ArrowLeft,
   DollarSign,
   TrendingUp,
   Clock,
@@ -61,78 +60,85 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
   const [report, setReport] = useState<AnalysisReport | null>(null)
 
   useEffect(() => {
-    // Mock data for demonstration
-    const mockReport: AnalysisReport = {
-      id: 'analysis_001',
-      companyName: 'Water Treatment Solutions Inc',
-      contactName: 'John Smith',
-      contactEmail: 'john@example.com',
-      generatedAt: new Date().toISOString(),
-      potentialSavings: 250000,
-      currentEfficiency: 60,
-      optimalEfficiency: 85,
-      bedLifeDays: 180,
-      paybackPeriod: 8,
-      roi: 400,
-      recommendations: [
-        {
-          priority: 'high',
-          category: 'System Optimization',
-          title: 'Increase Empty Bed Contact Time',
-          description: 'Extend EBCT from 15 to 20 minutes to improve adsorption efficiency',
-          impact: '15% efficiency improvement',
-          cost: 15000,
-          timeline: '2-3 weeks'
-        },
-        {
-          priority: 'high',
-          category: 'GAC Replacement',
-          title: 'Upgrade to High-Performance GAC',
-          description: 'Replace current GAC with premium coconut shell activated carbon',
-          impact: '25% longer bed life',
-          cost: 45000,
-          timeline: '4-6 weeks'
-        },
-        {
-          priority: 'medium',
-          category: 'Process Control',
-          title: 'Implement Automated Monitoring',
-          description: 'Install real-time monitoring system for optimal operation',
-          impact: '10% operational efficiency gain',
-          cost: 25000,
-          timeline: '6-8 weeks'
-        },
-        {
-          priority: 'medium',
-          category: 'Maintenance',
-          title: 'Optimize Regeneration Schedule',
-          description: 'Implement predictive maintenance based on performance data',
-          impact: '20% reduction in downtime',
-          cost: 12000,
-          timeline: '3-4 weeks'
+    const fetchReport = async () => {
+      try {
+        const resolvedParams = await params
+        const response = await fetch(`/api/report/${resolvedParams.id}`)
+
+        if (!response.ok) {
+          throw new Error('Report not found')
         }
-      ],
-      costBreakdown: {
-        currentAnnualCost: 450000,
-        projectedAnnualCost: 200000,
-        implementationCost: 97000,
-        annualSavings: 250000
-      },
-      technicalDetails: {
-        systemType: 'Fixed Bed',
-        gacType: 'Coal Based',
-        flowRate: 100,
-        bedVolume: 9.42,
-        emptyBedContactTime: 15,
-        hydraulicLoadingRate: 10
+
+        const data = await response.json()
+
+        // Transform database report to match AnalysisReport interface
+        const transformedReport: AnalysisReport = {
+          id: data.id,
+          companyName: data.contactRequest.companyName,
+          contactName: data.contactRequest.contactName,
+          contactEmail: data.contactRequest.contactEmail,
+          generatedAt: data.generatedAt,
+          potentialSavings: data.capitalAvoidance,
+          currentEfficiency: 60,
+          optimalEfficiency: 85,
+          bedLifeDays: Math.round(data.projectedLifespanMonths * 30),
+          paybackPeriod: 8,
+          roi: 400,
+          recommendations: [
+            {
+              priority: 'high',
+              category: 'System Optimization',
+              title: 'Increase Empty Bed Contact Time',
+              description: 'Extend EBCT from 15 to 20 minutes to improve adsorption efficiency',
+              impact: '15% efficiency improvement',
+              cost: 15000,
+              timeline: '2-3 weeks'
+            },
+            {
+              priority: 'high',
+              category: 'GAC Replacement',
+              title: 'Upgrade to High-Performance GAC',
+              description: 'Replace current GAC with premium coconut shell activated carbon',
+              impact: '25% longer bed life',
+              cost: 45000,
+              timeline: '4-6 weeks'
+            },
+            {
+              priority: 'medium',
+              category: 'Process Control',
+              title: 'Implement Automated Monitoring',
+              description: 'Install real-time monitoring system for optimal operation',
+              impact: '10% operational efficiency gain',
+              cost: 25000,
+              timeline: '6-8 weeks'
+            }
+          ],
+          costBreakdown: {
+            currentAnnualCost: 450000,
+            projectedAnnualCost: 200000,
+            implementationCost: 97000,
+            annualSavings: data.capitalAvoidance
+          },
+          technicalDetails: {
+            systemType: 'Fixed Bed',
+            gacType: 'Coal Based',
+            flowRate: 100,
+            bedVolume: 9.42,
+            emptyBedContactTime: 15,
+            hydraulicLoadingRate: 10
+          }
+        }
+
+        setReport(transformedReport)
+        setIsLoading(false)
+      } catch (error) {
+        console.error('Error fetching report:', error)
+        setIsLoading(false)
       }
     }
-    
-    setTimeout(() => {
-      setReport(mockReport)
-      setIsLoading(false)
-    }, 1000)
-  }, [])
+
+    fetchReport()
+  }, [params])
 
   const getPriorityBadge = (priority: string) => {
     switch (priority) {
@@ -178,9 +184,6 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
-                <BarChart3 className="h-4 w-4 text-white" />
-              </div>
               <span className="text-xl font-semibold text-gray-900">Analysis Report</span>
             </div>
             <div className="flex items-center space-x-4">
